@@ -1,0 +1,66 @@
+<h1>M33KI</h1>
+<pre><code>
+$.ajax({
+  type: "POST",
+  url: "/books",
+  data: '{"author":"Voltaire", "title":"Zadig"}',
+  success: function(data) {
+    console.log("-->", data)
+  },
+  error: function(err){ 
+    console.log("ERR",err)
+  }
+});
+</code></pre>
+<pre><code>
+$.ajax({
+  type: "GET",
+  url: "/books/6802bd85-04e3-48aa-8a26-d0fe1133e253",
+  success: function(data) {
+    console.log("-->", data)
+  },
+  error: function(err){ 
+    console.log("ERR",err)
+  }
+});
+</code></pre>
+<pre><code>
+$.ajax({
+  type: "GET",
+  url: "/books",
+  success: function(data) {
+    console.log("-->", data)
+  },
+  error: function(err){ 
+    console.log("ERR",err)
+  }
+});
+</code></pre>
+<pre><code>
+$.ajax({
+    type: "PUT",
+    url: "/books/94468ddf-eb3a-4871-a40a-fc8f89878acb",
+    data: '{"author":"BORGES", "title":"Fiction", "id":"94468ddf-eb3a-4871-a40a-fc8f89878acb"}',
+    success: function(data) {
+      console.log("-->", data)
+    },
+    error: function(err){ 
+      console.log("ERR",err)
+    }
+  });
+</code></pre>
+<pre><code>
+ $.ajax({
+    type: "DELETE",
+    url: "/books/ee674af3-436f-4ef0-813f-d16d8baf0b80",
+    success: function(data) {
+      console.log("-->", data)
+    },
+    error: function(err){ 
+      console.log("ERR",err)
+    }
+  });
+</code></pre>
+<script src="jquery.min.js"></script>
+
+
