@@ -58,7 +58,6 @@ function main = |args| {
     return book: toJsonString()
   }) 
 
-
   DELETE("/books/:id", |request, response| {
     response:type("application/json")
     let book = Book(): delete(request: params(":id"))

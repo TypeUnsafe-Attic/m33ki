@@ -1,66 +1,43 @@
-<h1>M33KI</h1>
-<pre><code>
-$.ajax({
-  type: "POST",
-  url: "/books",
-  data: '{"author":"Voltaire", "title":"Zadig"}',
-  success: function(data) {
-    console.log("-->", data)
-  },
-  error: function(err){ 
-    console.log("ERR",err)
-  }
-});
-</code></pre>
-<pre><code>
-$.ajax({
-  type: "GET",
-  url: "/books/6802bd85-04e3-48aa-8a26-d0fe1133e253",
-  success: function(data) {
-    console.log("-->", data)
-  },
-  error: function(err){ 
-    console.log("ERR",err)
-  }
-});
-</code></pre>
-<pre><code>
-$.ajax({
-  type: "GET",
-  url: "/books",
-  success: function(data) {
-    console.log("-->", data)
-  },
-  error: function(err){ 
-    console.log("ERR",err)
-  }
-});
-</code></pre>
-<pre><code>
-$.ajax({
-    type: "PUT",
-    url: "/books/94468ddf-eb3a-4871-a40a-fc8f89878acb",
-    data: '{"author":"BORGES", "title":"Fiction", "id":"94468ddf-eb3a-4871-a40a-fc8f89878acb"}',
-    success: function(data) {
-      console.log("-->", data)
-    },
-    error: function(err){ 
-      console.log("ERR",err)
-    }
-  });
-</code></pre>
-<pre><code>
- $.ajax({
-    type: "DELETE",
-    url: "/books/ee674af3-436f-4ef0-813f-d16d8baf0b80",
-    success: function(data) {
-      console.log("-->", data)
-    },
-    error: function(err){ 
-      console.log("ERR",err)
-    }
-  });
-</code></pre>
-<script src="jquery.min.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>M33</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link href="bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="backgrid/backgrid.css">
+    <style>
+        .jumbotron {
+            color: #ffffff;
+            background-color: #0f3a28;
+            border-radius: 0px;
+        }
+    </style>
+</head>
+<body style="visibility: hidden;">
 
+    <!--<div class="container">-->
+        <div class="jumbotron">
+            <h1>M33KI</h1>
+            <p>
+                Web Stack, Golo powered for <b>TypeUnSafe inc.</b>
+                <a class="label label-info" href="https://github.com/k33g/m33ki"> github.com/k33g/m33ki</a>
+                <span class="label label-warning this-is-a-message">Hello world! :)</span>
+            </p>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="book-form-view"></div>
+                </div>
+                <div class="col-md-6">
+                    <div class="books-view"></div>
+                </div>
+            </div>
+        </div>
+    <!--</div>-->
 
+    <script data-main="js/main" src="js/vendors/require.min.js"></script>
+</body>
+</html>
