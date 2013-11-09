@@ -3,6 +3,7 @@ module m33ki.collections
 import m33ki.jackson
 
 function Collection = -> DynamicObject()
+  :model("")
   :models(map[])
   :addItem(|this, model| -> this: models(): put(model: getField("id"), model))
   :getItem(|this, id| -> this: models(): get(id))

@@ -4,9 +4,16 @@ import m33ki.spark
 import m33ki.jackson
 import m33ki.models
 import m33ki.collections
+import m33ki.mongodb
 
-function Book = -> DynamicObject(): mixin(Model())
-function Books = -> DynamicObject(): mixin(Collection())
+function Book = -> DynamicObject()
+  :mixin(Model())
+  :mixin(MongoModel(Mongo(): database("golodb"): collection("books")))
+
+function Books = -> DynamicObject()
+  :mixin(Collection())
+  :mixin(MongoCollection(Book()))
+
 
 function main = |args| {
 
@@ -15,25 +22,26 @@ function main = |args| {
   static("/public") 
   port(8888)
 
+  # Create a book
   POST("/books", |request, response| {
     response:type("application/json")
-    let book = Book(): fromJsonString(request: body()): generateId()    
-    books: addItem(book)
+    let book = Book(): fromJsonString(request: body())
+    book: create() # insert in collection
     response: status(201) # 201: created
     return book: toJsonString()
   })
 
-  PUT("/books/:id", |request, response| {
+  # Retrieve all books
+  GET("/books", |request, response| {
     response:type("application/json")
-    let book = Book(): fromJsonString(request: body())  
-    # TODO: test if exists
-    books: addItem(book) #update if exists
-    return book: toJsonString()
-  }) 
+    return books: fetch(): toJsonString()
+  })
 
+  # Retrieve a book by id
   GET("/books/:id", |request, response| {
     response:type("application/json")
-    let book = books: getItem(request: params(":id"))
+
+    let book = Book(): fetch(request: params(":id"))
 
     if book isnt null{
       return book: toJsonString()
@@ -43,16 +51,17 @@ function main = |args| {
     }
   })
 
-  GET("/books", |request, response| {
+  PUT("/books/:id", |request, response| {
     response:type("application/json")
-    #return Json(): toJsonString(books: toList())
-    return books: toJsonString()
-  })
+    let book = Book(): fromJsonString(request: body())  
+    book: update()
+    return book: toJsonString()
+  }) 
+
 
   DELETE("/books/:id", |request, response| {
     response:type("application/json")
-    # TODO: test if exists
-    let book = books: removeItem(request: params(":id"))
+    let book = Book(): delete(request: params(":id"))
     return Json(): message(request: params(":id") + " has been deleted")
   })
 
