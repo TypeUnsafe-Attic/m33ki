@@ -2,6 +2,12 @@
 
 >>Web Stack, Golo powered for TypeUnSafe inc.
 
+##Components (currently)
+
+- Spark
+- Jackson
+- MongoDb
+
 ##Backlog
 
 - Redis (jedis)
