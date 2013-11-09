@@ -1,4 +1,4 @@
-module spark_java
+module m33ki
 
 import m33ki.spark
 import m33ki.jackson
