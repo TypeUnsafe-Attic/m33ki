@@ -6,6 +6,8 @@ import m33ki.models
 import m33ki.collections
 import m33ki.mongodb
 
+import m33ki.sse
+
 function Book = -> DynamicObject()
   :mixin(Model())
   :mixin(MongoModel(Mongo(): database("golodb"): collection("books")))
@@ -64,7 +66,33 @@ function main = |args| {
     return Json(): message(request: params(":id") + " has been deleted")
   })
 
+  # How to call server sent events
+  # (with jquery)
+  #
+  #  var source = new EventSource('/go');
+  #
+  #  source.addEventListener('message', function(e) {
+  #      console.log(e.data);
+  #  }, false);
+  #
+  # ... source.close()
+
+  # silly sample
+  GET("/go", |request, response| { #TODO: same thing with workers (or futures)
+
+    let sse = DynamicObject(): mixin(ServerSourceEvent()):
+        work(|this, message| {
+            10: times(|iteration| {
+                print(iteration + "|...|")
+                this: write(java.util.Date(): toString())
+                java.lang.Thread.sleep(1000_L)
+            })
+            println(" --> the end")
+            this: close()
+        })
+
+    sse: initialize(response): start("go")
+  })
+
 }
-
-
 
