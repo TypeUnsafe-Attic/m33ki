@@ -1,13 +1,13 @@
 define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'bootstrap',
-    'models/Book',
-    'models/Books',
-    'views/BooksView',
-    'views/BookFormView',
-    'lazy'
+  'jquery',
+  'underscore',
+  'backbone',
+  'bootstrap',
+  'models/Book',
+  'models/Books',
+  'views/BooksView',
+  'views/BookFormView',
+  'lazy'
 ], function(
 		$, _, Backbone
 	, bootstrap

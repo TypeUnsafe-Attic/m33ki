@@ -10,6 +10,7 @@
 
 ##Backlog
 
+- Query helper 4 Mongo
 - Redis (jedis)
 - Future
 - Server Web Events
