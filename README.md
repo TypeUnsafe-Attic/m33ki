@@ -8,12 +8,17 @@
 - Jackson
 - MongoDb
 
+##Functionalities
+
+- Routes / REST API
+- Models and Collections + Mongo
+- Server Web Events (Server Sent Events)
+
 ##Backlog
 
 - Query helper 4 Mongo
 - Redis (jedis)
 - Future
-- Server Web Events
 - Authentication (+ Cookies)
 - Actors
 - ...
