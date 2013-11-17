@@ -1,5 +1,7 @@
 #M33ki
 
+![BB](meekilogo.png)
+
 >>Web Stack, Golo powered for TypeUnSafe inc.
 
 ##Components (currently)
@@ -13,12 +15,13 @@
 - Routes / REST API
 - Models and Collections + Mongo
 - Server Web Events (Server Sent Events)
+- Future (simple)
 
 ##Backlog
 
 - Query helper 4 Mongo
 - Redis (jedis)
-- Future
+- Scheduled Future
 - Authentication (+ Cookies)
 - Actors
 - ...
