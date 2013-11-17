@@ -6,6 +6,7 @@ import m33ki.models
 import m33ki.collections
 import m33ki.mongodb
 
+import m33ki.futures
 import m33ki.sse
 
 function Book = -> DynamicObject()
@@ -69,7 +70,7 @@ function main = |args| {
   # How to call server sent events
   # (with jquery)
   #
-  #  var source = new EventSource('/go');
+  #  var source = new EventSource('/sse');
   #
   #  source.addEventListener('message', function(e) {
   #      console.log(e.data);
@@ -77,22 +78,26 @@ function main = |args| {
   #
   # ... source.close()
 
+
   # silly sample
-  GET("/go", |request, response| { #TODO: same thing with workers (or futures)
-
-    let sse = DynamicObject(): mixin(ServerSourceEvent()):
-        work(|this, message| {
-            10: times(|iteration| {
-                print(iteration + "|...|")
-                this: write(java.util.Date(): toString())
-                java.lang.Thread.sleep(1000_L)
-            })
-            println(" --> the end")
-            this: close()
-        })
-
-    sse: initialize(response): start("go")
+  GET("/sse", |request, response| {
+    let sse = ServerSourceEvent(): initialize(response)
+    10: times({
+        sse: write(java.util.Date(): toString())
+        java.lang.Thread.sleep(1000_L)
+    })
+    sse: close()
   })
+
+  let executor = getExecutor()
+  GET("/future", |request, response| {
+    Future(executor, |message| {
+      10: times({
+        println(java.util.Date(): toString())
+      })
+    }):submit(null)
+  })
+
 
 }
 

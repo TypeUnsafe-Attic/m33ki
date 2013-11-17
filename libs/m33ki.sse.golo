@@ -6,6 +6,11 @@ module m33ki.sse
 function ServerSourceEvent = -> DynamicObject()
     :initialize(|this, response| {
         this: response(response)
+        this: response(): type("text/event-stream")
+        this: response(): header("Cache-Control", "no-cache")
+        this: response(): header("Connection", "keep-alive")
+        this: response(): status(200)
+        this: response(): raw(): setCharacterEncoding("UTF-8")
         return this
     })
     :write(|this, data| {
@@ -19,16 +24,6 @@ function ServerSourceEvent = -> DynamicObject()
         }
     })
     :close(|this| -> this: out(): close())
-    :start(|this, message| {
-        #this: message(message)
-        this: response(): type("text/event-stream")
-        this: response(): header("Cache-Control", "no-cache")
-        this: response(): header("Connection", "keep-alive")
-        this: response(): status(200)
-        this: response(): raw(): setCharacterEncoding("UTF-8")
-        this: work(message) # TODO: try catch -> or if exists
 
-        return this
-    })
 
 
