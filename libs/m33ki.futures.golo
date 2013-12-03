@@ -35,7 +35,7 @@ augment java.util.concurrent.Future {
 function Future = |executor, callable| -> DynamicObject()
     :executor(executor)
     :submit(|this, message| {
-        let worker = (-> callable(message)):to(java.util.concurrent.Callable.class)
-        return this: executor(): submit(worker) #future is run when submit()
+        #let worker = (-> callable(message)):to(java.util.concurrent.Callable.class)
+        return this: executor(): submit(callable(message)) #future is run when submit()
     })
 
