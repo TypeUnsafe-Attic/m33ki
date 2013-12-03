@@ -3,15 +3,15 @@ define([
   'underscore',
   'backbone',
   'lazy',
-  'text!templates/books.tpl.html'
+  'text!./tpl.html'
 ], function($, _, Backbone, Lazy, booksTpl){
 
   var BooksView = Lazy.View.extend({
-    properties : {
+    properties : function() {return{
       el : ".books-view",
       template : booksTpl,
       alias : "books" // data alias for the template
-    },
+    }},
     events: {
       'click .close-list': 'close'
     }

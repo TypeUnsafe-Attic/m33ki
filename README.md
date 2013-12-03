@@ -1,6 +1,6 @@
 #M33ki
 
-![BB](meekilogo.png)
+![...](meekilogo.png)
 
 >>Web Stack, Golo powered for TypeUnSafe inc.
 

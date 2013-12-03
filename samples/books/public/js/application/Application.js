@@ -5,18 +5,16 @@ define([
   'bootstrap',
   'models/Book',
   'models/Books',
-  'views/BooksView',
-  'views/BookFormView',
-  'lazy'
+  'views/BooksTable/view',
+  'views/BookForm/view'
 ], function(
 		$, _, Backbone
 	, bootstrap
 	, Book, Books
-	, BooksView, BookFormView
-  , Lazy)
+	, BooksView, BookFormView)
 {
 
-  var Application = Lazy.Application.extend({ // application is a router
+  var Application = Backbone.Router.extend({ // application is a router
 
     routes : {
         "help": "help"    // #help

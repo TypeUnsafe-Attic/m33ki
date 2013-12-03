@@ -22,7 +22,8 @@ function main = |args| {
 
   let books = Books()
 
-  static("/public") 
+  #static("/public")
+  static("/samples/books/public")
   port(8888)
 
   # Create a book
@@ -66,38 +67,6 @@ function main = |args| {
     let book = Book(): delete(request: params(":id"))
     return Json(): message(request: params(":id") + " has been deleted")
   })
-
-  # How to call server sent events
-  # (with jquery)
-  #
-  #  var source = new EventSource('/sse');
-  #
-  #  source.addEventListener('message', function(e) {
-  #      console.log(e.data);
-  #  }, false);
-  #
-  # ... source.close()
-
-
-  # silly sample
-  GET("/sse", |request, response| {
-    let sse = ServerSourceEvent(): initialize(response)
-    10: times({
-        sse: write(java.util.Date(): toString())
-        java.lang.Thread.sleep(1000_L)
-    })
-    sse: close()
-  })
-
-  let executor = getExecutor()
-  GET("/future", |request, response| {
-    Future(executor, |message| {
-      10: times({
-        println(java.util.Date(): toString())
-      })
-    }):submit(null)
-  })
-
 
 }
 

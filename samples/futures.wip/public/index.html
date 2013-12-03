@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple</title>
+  <link href="css/simple.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+  <div class="content">
+    <h1>Futures</h1>
+
+    <button>GO</button>
+  </div>
+
+<script src="js/vendors/jquery-2.0.3.min.js"></script>
+<script>
+  $(function() {
+    /* When ready */
+
+    /* When clicked add new Human and refresh List */
+    $("button").click(function() {
+
+      $.get("future", function(data){
+        console.log(data)
+        $("h1").html(data);
+
+        /* polling result */
+
+        var listener = setInterval(function(){
+
+          $.get("resfuture", function(data){
+
+            if(data !== null) {
+              clearInterval(listener);
+              $("h1").html(data);
+            }
+          });
+
+        },5);
+        /* every 5 ms */
+
+      });
+    });
+  });
+</script>
+</body>
+</html>

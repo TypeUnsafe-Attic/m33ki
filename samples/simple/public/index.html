@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple</title>
+  <link href="css/simple.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+  <div class="content">
+    <h1>New Human</h1>
+    <form>
+      <input type="text" name="firstName" placeholder="firstName">
+      <input type="text" name="lastName" placeholder="lastName">
+    </form>
+
+    <button>add</button>
+  </div>
+
+  <div class="content">
+    <h1>Humans list</h1>
+    <ul></ul>
+  </div>
+
+<script src="js/vendors/jquery-2.0.3.min.js"></script>
+<script>
+  $(function() {
+    /* When ready */
+    var list = $("ul")
+      , firstName =  $("input[name='firstName']")
+      , lastName =  $("input[name='lastName']")
+    /* ... get all Humans */
+    $.get("humans", function(humans){
+      humans.forEach(function(human){
+        list.append([
+          "<li>",
+          human.id, " ", human.firstName, " ", human.lastName,
+          "</li>"
+        ].join(""));
+      });
+    });
+
+    /* When clicked add new Human and refresh List */
+    $("button").click(function() {
+      $.ajax({
+        type: "POST",
+        url: "humans",
+        data: JSON.stringify({firstName:firstName.val(), lastName:lastName.val()}),
+        success: function(human){
+          list.append([
+            "<li>",
+            human.id, " ", human.firstName, " ", human.lastName,
+            "</li>"
+          ].join(""));
+        },
+        dataType: "json"
+      });
+    });
+  });
+</script>
+</body>
+</html>

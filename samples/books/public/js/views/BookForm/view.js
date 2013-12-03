@@ -3,15 +3,15 @@ define([
   'underscore',
   'backbone',
   'lazy',
-  'text!templates/book.form.tpl.html'
+  'text!./tpl.html'
 ], function($, _, Backbone, Lazy, bookFormTpl){
 
   var BookFormView = Lazy.View.extend({
-    properties : {
+    properties : function(){return{
       el : ".book-form-view",
       alias : "book", // data alias for the template,
       template : bookFormTpl
-    },
+    }},
     events : {
       'click .add-book': 'add',
       'change input': 'change'

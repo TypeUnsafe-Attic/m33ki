@@ -5,7 +5,10 @@ import m33ki.jackson
 function Collection = -> DynamicObject()
   :model("")
   :models(map[])
-  :addItem(|this, model| -> this: models(): put(model: getField("id"), model))
+  :addItem(|this, model| {
+    this: models(): put(model: getField("id"), model)
+    return this
+  })
   :getItem(|this, id| -> this: models(): get(id))
   :removeItem(|this, id| -> this: models(): remove(id))
   :toList(|this| {
@@ -18,3 +21,5 @@ function Collection = -> DynamicObject()
   :toJsonString(|this| {
     return Json(): toJsonString(this: toList())
   })
+
+#TODO: addItems

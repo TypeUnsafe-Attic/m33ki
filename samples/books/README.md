@@ -1,0 +1,2 @@
+- `mongod`
+- `golo golo --classpath jars/*.jar --files libs/*.golo samples/books/books.golo`

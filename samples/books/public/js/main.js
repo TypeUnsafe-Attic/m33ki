@@ -7,7 +7,7 @@ requirejs.config({
     "backbone"      : "vendors/backbone-min",   /*This is amd version of backbone   */
     "text"          : "vendors/text",
     "bootstrap"     : "../bootstrap3/js/bootstrap.min",
-    "lazy"          : "org.k33g/lazy"
+    "lazy"          : "vendors/org.k33g/lazy"
   },
 	shim: {
 		"bootstrap": {
@@ -21,15 +21,17 @@ requirejs.config({
 
 require([
   'domReady',
-  'application'
-], function (domReady,application) {
+  'application/Application',
+  'backbone'
+], function (domReady, Application, Backbone) {
 
 	domReady(function () {
 		//This function is called once the DOM is ready.
 		//It will be safe to query the DOM and manipulate
 		//DOM nodes in this function.
 		$('body').css('visibility', 'visible');
-		application.initialize();
+    window.App = new Application();
+    Backbone.history.start();
 	});
 
 });
