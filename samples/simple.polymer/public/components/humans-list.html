@@ -1,0 +1,19 @@
+<polymer-element name="humans-list" attributes="humans">
+  <template>
+    <polymer-signals on-polymer-signal-allhumans="{{allHumansSignal}}"></polymer-signals>
+    <ul>
+      <template repeat="{{humans}}">
+        <li>{{id}} {{firstName}} {{lastName}}</li>
+      </template>
+    </ul>
+
+  </template>
+  <script>
+    Polymer("humans-list",{
+      ready: function(){ },
+      allHumansSignal: function(e, detail, sender) {
+        this.humans = detail;
+      }
+    });
+  </script>
+</polymer-element>

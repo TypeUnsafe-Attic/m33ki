@@ -51,7 +51,7 @@ function main = |args| {
       return book: toJsonString()
     } else {
       response: status(404) # 404 Not found
-      return Json(): message("message", "Book not found")
+      return Json(): toJsonString(map[["message", "Book not found"]])
     }
   })
 
@@ -65,6 +65,7 @@ function main = |args| {
   DELETE("/books/:id", |request, response| {
     response:type("application/json")
     let book = Book(): delete(request: params(":id"))
+
     return Json(): message(request: params(":id") + " has been deleted")
   })
 

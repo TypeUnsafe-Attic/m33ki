@@ -1,0 +1,25 @@
+<polymer-element name="post-human">
+  <template>
+    <!--listen to form -->
+    <polymer-signals on-polymer-signal-addhuman="{{addHumanSignal}}"></polymer-signals>
+  </template>
+
+  <script>
+    Polymer("post-human",{
+      ready: function(){},
+      addHumanSignal : function(e, detail, sender) {
+        var that = this;
+        $.ajax({
+          type:"POST", dataType: 'json', contentType: "application/json",
+          url:"humans",
+          data:JSON.stringify(detail),
+          error : function(err){console.log(err);},
+          success : function(data){
+            //refresh list : GET /humans
+            that.asyncFire('polymer-signal', {name: "humanadded" , data: null });
+          }
+        });
+      }
+    });
+  </script>
+</polymer-element>

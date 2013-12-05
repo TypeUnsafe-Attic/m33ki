@@ -60,7 +60,7 @@ function main = |args| {
       return human: toJsonString()
     } else {
       response: status(404) # 404 Not found
-      return Json(): message("message", "Human not found")
+      return Json(): toJsonString(map[["message", "Human not found"]])
     }
   })
 

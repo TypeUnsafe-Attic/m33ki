@@ -21,6 +21,7 @@
     $("button").click(function() {
 
       $.get("future", function(data){
+        console.log("fetching")
         console.log(data)
         $("h1").html(data);
 
@@ -30,14 +31,19 @@
 
           $.get("resfuture", function(data){
 
-            if(data !== null) {
+            console.log(data)
+
+            if(data.message !== "wait") {
               clearInterval(listener);
-              $("h1").html(data);
+              $("h1").html(data.message);
+            } else {
+              console.log("waiting again for result ...")
             }
           });
 
-        },5);
-        /* every 5 ms */
+        },500);
+
+        /* every 1000 ms */
 
       });
     });
