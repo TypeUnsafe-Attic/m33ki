@@ -16,6 +16,7 @@ M33ki is a set of Golo libraries (see `/libs` directory) using [SparkJava](http:
 
 At the root of the `<application_name>`, create a golo script, ie: `myapp.golo` with this code :
 
+{% highlight coffeescript %}
     module myapp
 
     import m33ki.spark
@@ -62,6 +63,7 @@ At the root of the `<application_name>`, create a golo script, ie: `myapp.golo` 
         """
       })
     }
+{% endhighlight %}
 
 Run it :
 
@@ -71,6 +73,7 @@ Open your browser : [http://localhost:8888/](http://localhost:8888/)
 
 ##Create a JSON Services
 
+{% highlight coffeescript %}
     module myapp
 
     import m33ki.spark
@@ -91,6 +94,7 @@ Open your browser : [http://localhost:8888/](http://localhost:8888/)
         return Json(): toJsonString(map[["result", result]])
       })
     }
+{% endhighlight %}
 
 Open your browser : [http://localhost:8888/add/5/4](http://localhost:8888/add/5/4), and you'll obtain :
 
