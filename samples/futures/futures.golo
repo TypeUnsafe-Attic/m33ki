@@ -22,10 +22,7 @@ function main = |args| {
       5: times({
         r: value(r: value() + 1)
         println(r: value())
-
         java.lang.Thread.sleep(1000_L)
-
-        #println(java.util.Date(): toString())
       })
       self: result("Result : " + r: value())
     })
@@ -53,9 +50,6 @@ function main = |args| {
     }
 
   })
-
-
-
 
 }
 
