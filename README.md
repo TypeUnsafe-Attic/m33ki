@@ -17,52 +17,52 @@ M33ki is a set of Golo libraries (see `/libs` directory) using [SparkJava](http:
 At the root of the `<application_name>`, create a golo script, ie: `myapp.golo` with this code :
 
 ```coffeescript
-    module myapp
+module myapp
 
-    import m33ki.spark
+import m33ki.spark
 
-    function main = |args| {
+function main = |args| {
 
-      port(8888)
+  port(8888)
 
-      #Home page
-      GET("/", |request, response| {
-        response:type("text/HTML")
+  #Home page
+  GET("/", |request, response| {
+    response:type("text/HTML")
 
-        return 
-        """
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <title>M33KI</title>
-          </head>
-          <body>
-            <h1>Golo is awesome</h1>
-            <hr>
-            <a href="/other_page">An other page</a>
-          </body>
-        """
-      })
+    return 
+    """
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>M33KI</title>
+      </head>
+      <body>
+        <h1>Golo is awesome</h1>
+        <hr>
+        <a href="/other_page">An other page</a>
+      </body>
+    """
+  })
 
-      #An other page
-      GET("/other_page", |request, response| {
-        response:type("text/HTML")
+  #An other page
+  GET("/other_page", |request, response| {
+    response:type("text/HTML")
 
-        return 
-        """
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <title>M33KI</title>
-          </head>
-          <body>
-            <h1>Hello World!</h1>
-            <hr>
-            <a href="/">Home page</a>
-          </body>
-        """
-      })
-    }
+    return 
+    """
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>M33KI</title>
+      </head>
+      <body>
+        <h1>Hello World!</h1>
+        <hr>
+        <a href="/">Home page</a>
+      </body>
+    """
+  })
+}
 ```
 
 Run it :
@@ -74,26 +74,26 @@ Open your browser : [http://localhost:8888/](http://localhost:8888/)
 ##Create a JSON Services
 
 ```coffeescript
-    module myapp
+module myapp
 
-    import m33ki.spark
-    import m33ki.jackson
+import m33ki.spark
+import m33ki.jackson
 
-    function main = |args| {
+function main = |args| {
 
-      port(8888)
+  port(8888)
 
-      #Addition
-      GET("/add/:a/:b", |request, response| {
-        response:type("application/json")
+  #Addition
+  GET("/add/:a/:b", |request, response| {
+    response:type("application/json")
 
-        let result =  
-            request: params(":a"):toInteger() 
-          + request: params(":b"):toInteger()
+    let result =  
+        request: params(":a"):toInteger() 
+      + request: params(":b"):toInteger()
 
-        return Json(): toJsonString(map[["result", result]])
-      })
-    }
+    return Json(): toJsonString(map[["result", result]])
+  })
+}
 ```
 
 Open your browser : [http://localhost:8888/add/5/4](http://localhost:8888/add/5/4), and you'll obtain :
