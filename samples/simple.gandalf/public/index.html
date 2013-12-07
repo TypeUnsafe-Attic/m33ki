@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple</title>
+  <link href="css/simple.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+  <div class="content">
+    <h1>New Human</h1>
+    <form>
+      <input type="text" name="firstName" placeholder="firstName">
+      <input type="text" name="lastName" placeholder="lastName">
+    </form>
+    <button id="btnHuman">add</button>
+    <h1>Humans list</h1>
+    <ul id="humans"></ul>
+  </div>
+  <hr>
+  <div class="content">
+    <h1>New Animal</h1>
+    <form>
+      <input type="text" name="nickName" placeholder="nickName">
+    </form>
+    <button id="btnAnimal">add</button>
+    <h1>Animals list</h1>
+    <ul id="animals"></ul>
+  </div>
+
+<script src="js/vendors/jquery-2.0.3.min.js"></script>
+<script>
+  $(function() {
+    /* When ready */
+    var humansList = $("#humans")
+      , animalsList = $("#animals")
+      , firstName =  $("input[name='firstName']")
+      , lastName =  $("input[name='lastName']")
+      , nickName =  $("input[name='nickName']")
+    /* ... get all Humans */
+    $.get("humans", function(humans){
+      humans.forEach(function(human){
+        humansList.append([
+          "<li>",
+          human.id, " ", human.firstName, " ", human.lastName,
+          "</li>"
+        ].join(""));
+      });
+    });
+
+    /* ... get all Animals */
+    $.get("animals", function(animals){
+      animals.forEach(function(animal){
+        animalsList.append([
+          "<li>",
+          animal.id, " ", animal.nickName,
+          "</li>"
+        ].join(""));
+      });
+    });
+
+    /* When clicked add new Human and refresh List */
+    $("#btnHuman").click(function() {
+      $.ajax({
+        type: "POST",
+        url: "humans",
+        data: JSON.stringify({firstName:firstName.val(), lastName:lastName.val()}),
+        success: function(human){
+          humansList.append([
+            "<li>",
+            human.id, " ", human.firstName, " ", human.lastName,
+            "</li>"
+          ].join(""));
+        },
+        dataType: "json"
+      });
+    });
+
+    /* When clicked add new Animal and refresh List */
+    $("#btnAnimal").click(function() {
+      $.ajax({
+        type: "POST",
+        url: "animals",
+        data: JSON.stringify({nickName:nickName.val()}),
+        success: function(animal){
+          animalsList.append([
+            "<li>",
+            animal.id, " ", animal.nickName,
+            "</li>"
+          ].join(""));
+        },
+        dataType: "json"
+      });
+    });
+
+
+  });
+</script>
+</body>
+</html>
