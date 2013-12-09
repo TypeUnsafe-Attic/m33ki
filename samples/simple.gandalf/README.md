@@ -167,7 +167,7 @@ $.ajax({
   type: "POST",
   url: "users",
   data: JSON.stringify({
-      pseudo 		: "phil"
+        pseudo 		: "phil"
     ,	password 	: "phil"
     ,	create 		: true
     ,	read 		: true
@@ -208,7 +208,7 @@ $.ajax({
   type: "PUT",
   url: "users/phil",
   data: JSON.stringify({
-      pseudo 		: "phil"
+        pseudo 		: "phil"
     ,	password 	: "philip"
     ,	create 		: true
     ,	read 		: true
