@@ -170,7 +170,7 @@ $.ajax({
       pseudo 		: "phil"
     ,	password 	: "phil"
     ,	create 		: true
-    ,	read 		 : true
+    ,	read 		: true
     ,	update 		: true
     ,	delete 		: true
     ,	admin 		: false
@@ -211,7 +211,7 @@ $.ajax({
       pseudo 		: "phil"
     ,	password 	: "philip"
     ,	create 		: true
-    ,	read 		 : true
+    ,	read 		: true
     ,	update 		: true
     ,	delete 		: true
     ,	admin 		: true
