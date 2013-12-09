@@ -6,8 +6,7 @@ import m33ki.models
 import m33ki.collections
 import m33ki.mongodb
 
-import m33ki.futures
-import m33ki.sse
+#TODO: search query
 
 function Book = -> DynamicObject()
   :mixin(Model())
@@ -55,6 +54,8 @@ function main = |args| {
     }
   })
 
+
+
   PUT("/books/:id", |request, response| {
     response:type("application/json")
     let book = Book(): fromJsonString(request: body())  
@@ -64,6 +65,7 @@ function main = |args| {
 
   DELETE("/books/:id", |request, response| {
     response:type("application/json")
+
     let book = Book(): delete(request: params(":id"))
 
     return Json(): message(request: params(":id") + " has been deleted")

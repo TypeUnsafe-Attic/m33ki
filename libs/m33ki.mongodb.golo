@@ -11,6 +11,8 @@ import com.mongodb.DBCursor
 import com.mongodb.ServerAddress
 import org.bson.types.ObjectId
 
+import m33ki.collections
+
 function Mongo =  {
   let db = DynamicObject()  # default values
     :host("localhost")
@@ -76,7 +78,7 @@ function MongoModel = |mongoCollection|{
 }
 
 function MongoCollection = |mongoModel|{
-  let mongoColl = DynamicObject():model(mongoModel)
+  let mongoColl = DynamicObject(): model(mongoModel): kind("mongodb")
 
   # get all models
   mongoColl: fetch(|this| { # TODO: callback ?
@@ -90,9 +92,21 @@ function MongoCollection = |mongoModel|{
     cursor: close()
     return this
   })
+  #TODO: search like... % *
+  mongoColl: find(|this, fieldName, value| {
+    let memoryCollection = Collection()
+
+    let cursor = this: model(): collection()
+      : find(BasicDBObject("fields."+fieldName, value))
+      : each(|doc| {
+          let model = this: model(): copy()
+          model: fields(doc: get("fields"))
+          model: fields(): put("id", doc: getObjectId("_id"): toString())
+          memoryCollection: addItem(model)
+        })
+      : close()
+    return memoryCollection
+  })
 
   return mongoColl
 }
-
-
-
