@@ -87,7 +87,11 @@ $.ajax({
 ####Find a human
 
 ```javascript
+// with find
 $.get("humans/find/lastName/wayne", function(humans){ console.log(humans); })
+
+// with like and regex
+$.get("humans/like/firstName/.*am.*", function(humans){ console.log(humans); })
 ```
 
 ##Create a "secured" Gandalf application

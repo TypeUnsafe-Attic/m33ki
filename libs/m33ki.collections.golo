@@ -21,11 +21,23 @@ function Collection = -> DynamicObject(): kind("memory")
   : toJsonString(|this| {
       return Json(): toJsonString(this: toList())
     })
-  :  find(|this, fieldName, value| {
+  : find(|this, fieldName, value| {
       let coll = Collection()
 
       this: models(): filter(|key, model|{
         return model: getField(fieldName): equals(value)
+      }): each(|key, model|{
+        coll: addItem(model)
+      })
+
+      return coll
+
+    })
+  : like(|this, fieldName, value| {
+      let coll = Collection()
+
+      this: models(): filter(|key, model|{
+        return model: getField(fieldName): matches(value)
       }): each(|key, model|{
         coll: addItem(model)
       })

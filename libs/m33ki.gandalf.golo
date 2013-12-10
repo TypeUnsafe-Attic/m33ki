@@ -118,6 +118,24 @@ function CRUD = |collections| {
 
         })
 
+        #$.get("humans/like/firstName/.*am.*", function(humans){ console.log(humans); })
+        #search match(|this, fieldName, value|
+        GET("/"+key+"/like/:fieldName/:value", |request, response| {
+          println(request: params(":value"))
+          let collection = collections: get(key)
+          response: type("application/json")
+          if collection isnt null {
+            response: status(200)
+            return  collection: like(request: params(":fieldName"), request: params(":value")): toJsonString()
+          } else {
+            response: status(500) #
+            return Json(): message("Huston, we've got a problem")
+          }
+
+        })
+
+
+
         # Update model
         PUT("/"+key+"/:id", |request, response| {
 
