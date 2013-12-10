@@ -121,7 +121,6 @@ function CRUD = |collections| {
         #$.get("humans/like/firstName/.*am.*", function(humans){ console.log(humans); })
         #search match(|this, fieldName, value|
         GET("/"+key+"/like/:fieldName/:value", |request, response| {
-          println(request: params(":value"))
           let collection = collections: get(key)
           response: type("application/json")
           if collection isnt null {
