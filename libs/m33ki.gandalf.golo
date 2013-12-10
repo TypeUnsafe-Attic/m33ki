@@ -8,7 +8,6 @@ import m33ki.collections
 import m33ki.authentication
 
 #wip
-#TODO: search
 
 ----
 > Arguments :
