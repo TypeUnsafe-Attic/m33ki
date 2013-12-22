@@ -37,6 +37,8 @@ function Future = |executor, callable| -> DynamicObject()
     :result(null)
     :submit(|this, message| {
         let worker = (-> callable(message, this)):to(java.util.concurrent.Callable.class)
-        return this: executor(): submit(worker) #future is run when submit()
+        this: executor(): submit(worker) #future is run when submit()
+
+        return this
     })
 

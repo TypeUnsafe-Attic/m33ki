@@ -1,0 +1,1 @@
+`golo golo --classpath jars/*.jar --files libs/*.golo samples/promises/promises.golo`
