@@ -42,6 +42,7 @@ function MongoModel = |mongoCollection|{
   })
 
   mongoModel: fetch(|this, id| { # get one model by id, callBack ?
+    println("ID----> " + id)
     let doc = this: collection(): findOne(BasicDBObject("_id", ObjectId(id)))
 
     if doc isnt null {
@@ -77,6 +78,8 @@ function MongoModel = |mongoCollection|{
   return mongoModel
 }
 
+#TODO: some query helpers (find first etc. ...)
+
 function MongoCollection = |mongoModel|{
   let mongoColl = DynamicObject(): model(mongoModel): kind("mongodb")
 
@@ -92,7 +95,7 @@ function MongoCollection = |mongoModel|{
     cursor: close()
     return this
   })
-  #TODO: search like... % *
+  #coll: find("firstName", "John") (! return memory collection)
   mongoColl: find(|this, fieldName, value| {
     let memoryCollection = Collection()
 
@@ -107,6 +110,22 @@ function MongoCollection = |mongoModel|{
       : close()
     return memoryCollection
   })
+  #coll: like("firstName", ".*o.*") (! return memory collection)
+  mongoColl: like(|this, fieldName, value| {
+    let memoryCollection = Collection()
+
+    let cursor = this: model(): collection()
+      : find(BasicDBObject("fields."+fieldName, java.util.regex.Pattern.compile(value)))
+      : each(|doc| {
+          let model = this: model(): copy()
+          model: fields(doc: get("fields"))
+          model: fields(): put("id", doc: getObjectId("_id"): toString())
+          memoryCollection: addItem(model)
+        })
+      : close()
+    return memoryCollection
+  })
+
 
   return mongoColl
 }

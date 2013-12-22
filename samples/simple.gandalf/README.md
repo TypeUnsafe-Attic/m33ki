@@ -6,7 +6,13 @@
 
 >>WIP : this sample is using "memory" collections, MongoDb version has not been tested yet
 
+Mongo Version (without authentication) :
+
+`golo golo --classpath jars/*.jar --files libs/*.golo samples/simple.gandalf/simple.mongo.golo`
+
 ##Create a Gandalf Application
+
+###With "Memory" collections :
 
 ```coffeescript
 module simple
@@ -24,6 +30,51 @@ function main = |args| {
   CRUD(map[
       ["humans", Collection()]
     , ["animals", Collection()]
+  ])
+}
+```
+
+###With MongoDB Collection
+
+```coffeescript
+module simple
+
+import m33ki.spark
+import m33ki.collections
+import m33ki.gandalf
+
+import m33ki.models
+import m33ki.mongodb
+
+# Human model
+function Human = -> DynamicObject()
+  :mixin(Model())
+  :mixin(MongoModel(Mongo(): database("golodb"): collection("humans")))
+
+# Humans Collection
+function Humans = -> DynamicObject()
+  :mixin(Collection())
+  :mixin(MongoCollection(Human()))
+
+# Animal Model
+function Animal = -> DynamicObject()
+  :mixin(Model())
+  :mixin(MongoModel(Mongo(): database("golodb"): collection("animals")))
+
+# Animal Collection
+function Animals = -> DynamicObject()
+  :mixin(Collection())
+  :mixin(MongoCollection(Animal()))
+
+function main = |args| {
+
+  # static assets
+  static("/samples/simple.gandalf/public")
+  port(8888)
+
+  CRUD(map[
+      ["humans", Humans()]
+    , ["animals", Animals()]
   ])
 }
 ```
@@ -171,7 +222,7 @@ $.ajax({
   type: "POST",
   url: "users",
   data: JSON.stringify({
-        pseudo 		: "phil"
+      pseudo 		: "phil"
     ,	password 	: "phil"
     ,	create 		: true
     ,	read 		: true
@@ -200,19 +251,19 @@ $.ajax({
 ```javascript
 $.ajax({
   type: "GET",
-  url: "users/phil",
+  url: "users/pseudo/phil",
   success: function(human){ console.log(human) }
 });
 ```
 
-####Update a user :
+####Update a user (you need id of user):
 
 ```javascript
 $.ajax({
   type: "PUT",
-  url: "users/phil",
+  url: "users/52b6baaa3004530ace382ae1",
   data: JSON.stringify({
-        pseudo 		: "phil"
+      pseudo 		: "phil"
     ,	password 	: "philip"
     ,	create 		: true
     ,	read 		: true
@@ -226,12 +277,12 @@ $.ajax({
 });
 ```
 
-####Delete a user :
+####Delete a user (you need id of user):
 
 ```javascript
 $.ajax({
   type: "DELETE",
-  url: "users/phil",
+  url: "users/52b6baaa3004530ace382ae1",
   success: function(message){ console.log(message) }
 });
 ```

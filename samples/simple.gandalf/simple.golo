@@ -12,6 +12,7 @@ function main = |args| {
 
   let users = Collection()
 
+  #User is a model, defined in m33ki.authentication
   users
     : addItem(User(): pseudo("admin"): pwd("admin"): rights(true, true, true, true): admin(true))
     : addItem(User(): pseudo("bob"): pwd("hello"): rights(true, false, false, false))

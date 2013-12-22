@@ -25,7 +25,9 @@ function CRUD = |collections| {
   # --- SECURITY ---
   var SECURED = false
   let users = collections: get("users")
+
   if users isnt null {
+    println("=== SECURED MODE ===")
     AUTHENTICATION(users)
     ADMIN(users)
     SECURED = true
@@ -133,8 +135,6 @@ function CRUD = |collections| {
 
         })
 
-
-
         # Update model
         PUT("/"+key+"/:id", |request, response| {
 
@@ -192,7 +192,6 @@ function CRUD = |collections| {
             return Json(): toJsonString(map[["message", "insufficient rights"]])
           }
 
-
         })
 
       } # end when / memory
@@ -212,6 +211,7 @@ function CRUD = |collections| {
 
             if collection isnt null {
               let model = collection: model(): fromJsonString(request: body())
+
               model: create() # insert in collection
               response: status(201) # 201: created
               return model: toJsonString()
@@ -274,6 +274,21 @@ function CRUD = |collections| {
 
         })
 
+        #$.get("humans/like/firstName/.*am.*", function(humans){ console.log(humans); })
+        #search match(|this, fieldName, value|
+        GET("/"+key+"/like/:fieldName/:value", |request, response| {
+          let collection = collections: get(key)
+          response: type("application/json")
+          if collection isnt null {
+            response: status(200)
+            return  collection: like(request: params(":fieldName"), request: params(":value")): toJsonString()
+          } else {
+            response: status(500) #
+            return Json(): message("Huston, we've got a problem")
+          }
+
+        })
+
         #TODO:to be tested
         PUT("/"+key+"/:id", |request, response| {
 
@@ -301,16 +316,23 @@ function CRUD = |collections| {
 
 
         DELETE("/"+key+"/:id", |request, response| {
+          #println("=====================")
+          #println("SECURED : " + SECURED)
+          #println("Session(request): delete() : " + Session(request): delete())
 
           if (SECURED is false) or (Session(request): delete() is true) {
 
             let collection = collections: get(key)
             response: type("application/json")
 
+            #println("Collection : " + collection)
+
             if collection isnt null {
               response: status(200)
+              #TODO: if model not exist : try catch ?
               let model = collection: model(): delete(request: params(":id"))
               return Json(): message(request: params(":id") + " has been deleted")
+
             } else {
               response: status(500) #
               return Json(): message("Huston, we've got a problem")
