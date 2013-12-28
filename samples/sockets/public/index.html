@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple</title>
+  <link href="css/simple.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <log></log>
+
+<script src="js/vendors/jquery-2.0.3.min.js"></script>
+<script>
+
+  function message(msg) {
+    $("log").append(msg+'</p>')
+  }
+
+  function connect(){
+    try{
+
+      //var socket;
+      var host = "ws://localhost:8887";
+      window.socket = new WebSocket(host);
+
+      message('<p class="event">Socket Status: '+socket.readyState);
+
+      socket.onopen = function(){
+        message('<p class="event">Socket Status: '+socket.readyState+' (open)');
+      }
+
+      socket.onmessage = function(msg){
+        message('<p class="message">Received: '+msg.data);
+      }
+
+      socket.onclose = function(){
+        message('<p class="event">Socket Status: '+socket.readyState+' (Closed)');
+      }
+
+    } catch(exception){
+      message('<p>Error'+exception);
+    }
+  }
+
+
+  $(function() {
+    /* When ready */
+
+
+
+  });
+</script>
+</body>
+</html>
