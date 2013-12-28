@@ -5,9 +5,6 @@ import m33ki.collections
 import m33ki.gandalf
 import m33ki.authentication
 
-#import m33ki.jackson
-#import m33ki.models
-
 function main = |args| {
 
   let users = Collection()
