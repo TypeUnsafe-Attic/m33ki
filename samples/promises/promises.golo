@@ -33,7 +33,6 @@ function main = |args| {
     : success(|value| { # success
         println("success : " + value)
         result: value(value)
-
     })
     : error(|error| { # error
         println("error : " + error)
@@ -54,9 +53,6 @@ function main = |args| {
     return Json(): message(result: value())
 
    })
-
-
-
 
 }
 
