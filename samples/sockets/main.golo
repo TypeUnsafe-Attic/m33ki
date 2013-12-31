@@ -1,58 +1,39 @@
 module sockets
 
 import m33ki.spark
-import m33ki.jackson
-
-augment org.java_websocket.server.WebSocketServer {
-  function sendToAll = |this, text| {
-    let con = this: connections()
-    println(text)
-    let semaphore = java.util.concurrent.Semaphore(1)
-    semaphore: acquire()
-    con: each(|cx|{
-      cx: send(text)
-    })
-    semaphore: release()
-  }
-}
+import m33ki.json
+import m33ki.websockets
 
 function main = |args| {
 
-  # static assets
-  static("/samples/sockets/public")
-  port(8888)
+  initialize(): static("/samples/sockets/public"): port(8888): error(true)
 
-  let conf = map[
-    ["extends", "org.java_websocket.server.WebSocketServer"],
-    ["implements", map[
-      ["onOpen", |this, conn, handshake| {
-        this: sendToAll("new connection: "+ handshake: getResourceDescriptor())
-        println("-->" + conn: getRemoteSocketAddress(): getAddress(): getHostAddress() + " entered the room!" )
-        println(this: connections())
-
-      }],
-      ["onClose", |this, conn, code, reason, remote| {
-        this: sendToAll(conn + " bye bye")
-      }],
-      ["onMessage", |this, con, message| {
+  let myServer = WSocket(8887)
+    : define("onOpen", |this, dynConn| {
+        println(dynConn: uid() + " connected")
+      })
+    : define("onMessage", |this, dynConn, message| {
+        println("> message : " + message + " from "+ dynConn: uid())
         this: sendToAll(message)
-      }],
-      ["onError", |this, con, ex| {
-        ex: printStackTrace()
-      }]
-    ]]
-  ]
-  let s = AdapterFabric()
-    : maker(conf)
-    : newInstance(java.net.InetSocketAddress(8887))
+      })
+    : define("onClose", |this, dynConn| {
+        this: sendToAll(dynConn: uid() + " has exit.")
+      })
+    : define("onError", |this, dynConn, exception| {
+        # foo
+      })
+    : start()
 
-  s: start()
-  println(s: getPort())
+  println("WebSocket Server connected on " + myServer: port())
 
-    GET("/about", |request, response| {
-      response:type("application/json")
-      return Json(): toJsonString(map[["websockets_with", "https://github.com/TooTallNate/Java-WebSocket"]])
-    })
+  GET("/about", |request, response| {
+    response:type("application/json")
+    return Json(): toJsonString(map[
+      ["websockets_with", "https://github.com/TooTallNate/Java-WebSocket"]
+    ])
+  })
+
+
 
 }
 
