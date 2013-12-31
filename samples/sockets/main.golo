@@ -1,7 +1,7 @@
 module sockets
 
 import m33ki.spark
-import m33ki.json
+import m33ki.jackson
 import m33ki.websockets
 
 function main = |args| {
@@ -15,6 +15,7 @@ function main = |args| {
     : define("onMessage", |this, dynConn, message| {
         println("> message : " + message + " from "+ dynConn: uid())
         this: sendToAll(message)
+        this: sendTo(dynConn, Json(): toJsonString(map[["message", "roger!"]]))
       })
     : define("onClose", |this, dynConn| {
         this: sendToAll(dynConn: uid() + " has exit.")

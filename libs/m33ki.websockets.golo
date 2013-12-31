@@ -56,6 +56,11 @@ function WSocket = |port| {
     : define("port", |this| {
         return server: getPort()
       })
+    : define("sendTo", |this, dynConn, message| {
+        #println("==" + message + "==")
+        dynConn: socketConnection(): send(message)
+        return this
+      })
     : define("_onOpen", |this, connection, handshake|{
         let uid = java.util.UUID.randomUUID(): toString()
         let dynConn = DynamicObject(): socketConnection(connection): uid(uid)
