@@ -29,9 +29,7 @@ function main = |args| {
 
   humans: addItem(bob): addItem(john): addItem(jane)
 
-  # static assets
-  static("/samples/simple.polymer/public")
-  port(8888)
+  initialize(): static("/samples/simple.polymer/public"): port(8888): error(true)
 
   # Create a human
   POST("/humans", |request, response| {

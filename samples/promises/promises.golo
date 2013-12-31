@@ -8,9 +8,8 @@ struct result = { value }
 
 function main = |args| {
 
-  # static assets
-  static("/samples/promises/public")
-  port(8888)
+  initialize(): static("/samples/promises/public"): port(8888): error(true)
+
 
   let executor = getExecutor()
   var result = DynamicObject(): value(0)

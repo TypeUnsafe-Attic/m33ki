@@ -7,9 +7,7 @@ import m33ki.sse
 
 function main = |args| {
 
-  # static assets
-  static("/samples/sse")
-  port(8888)
+  initialize(): static("/samples/sse"): port(8888): error(true)
 
   # silly sample
   GET("/sse", |request, response| {

@@ -8,9 +8,7 @@ struct result = { value }
 
 function main = |args| {
 
-  # static assets
-  static("/samples/futures/public")
-  port(8888)
+  initialize(): static("/samples/futures/public"): port(8888): error(true)
 
   let executor = getExecutor()
 

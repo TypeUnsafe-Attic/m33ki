@@ -37,9 +37,7 @@ function MongoUsers = -> DynamicObject()
 
 function main = |args| {
 
-  # static assets
-  static("/samples/simple.gandalf/public")
-  port(8888)
+  initialize(): static("/samples/simple.gandalf/public"): port(8888): error(true)
 
   let users = MongoUsers()
 

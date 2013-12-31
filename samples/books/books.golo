@@ -21,9 +21,8 @@ function main = |args| {
 
   let books = Books()
 
-  #static("/public")
-  static("/samples/books/public")
-  port(8888)
+  initialize(): static("/samples/books/public"): port(8888): error(true)
+
 
   # Create a book
   POST("/books", |request, response| {

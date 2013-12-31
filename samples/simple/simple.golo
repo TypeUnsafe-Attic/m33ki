@@ -4,6 +4,7 @@ import m33ki.spark
 import m33ki.jackson
 import m33ki.models
 import m33ki.collections
+import m33ki.strings
 
 function main = |args| {
 
@@ -29,9 +30,7 @@ function main = |args| {
 
   humans: addItem(bob): addItem(john): addItem(jane)
 
-  # static assets
-  static("/samples/simple/public")
-  port(8888)
+  initialize(): static("/samples/simple/public"): port(8888): error(true)
 
   # Create a human
   POST("/humans", |request, response| {
@@ -64,5 +63,10 @@ function main = |args| {
     }
   })
 
-}
+  # generate error
+  GET("/stop", |request, response| {
+    let a = 5/0
+    return null
+  })
 
+}

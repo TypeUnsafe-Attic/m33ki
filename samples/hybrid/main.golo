@@ -37,9 +37,8 @@ function main = |args| {
 
   println(humansController: newInstance(): giveMeSomebody(): toString())
 
-  # static assets
-  static("/samples/hybrid/public")
-  port(8888)
+  initialize(): static("/samples/hybrid/public"): port(8888): error(true)
+
 
   GET("/human", |request, response| {
     response:type("application/json")
