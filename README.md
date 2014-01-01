@@ -6,7 +6,15 @@
 
 ##What is M33ki?
 
-M33ki is a set of Golo libraries (see `/libs` directory) using [SparkJava](http://www.sparkjava.com/), Jackson, MongoDb (and Redis) to create "webapps" quickly.
+M33ki is a set of Golo libraries (see `/libs` directory) using :
+
+- [SparkJava](http://www.sparkjava.com/),
+- Jackson,
+- MongoDb (and Redis)
+- Apache FileUpload
+- [Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket)
+
+... to create "webapps" quickly.
 
 >>M33ki webapps are designed to run on small devices (ie: RaspberryPi)
 
@@ -147,14 +155,16 @@ A little sample that runs with **MongoDb**. Launch MongoDb before (`mongod`), th
 ##Backlog
 
 - Big sample
-- Web sockets
-- Query helper 4 Mongo
+- Web sockets                 -> done
+- Query helper 4 Mongo        -> done
 - Redis (jedis)
 - Scheduled Future
-- Authentication (+ Cookies)
+- Promise                     -> done
+- Authentication (+ Cookies)  -> almost done
 - Actors
-- Error management
-- Hot Java compilation
+- Error management            -> done
+- Upload                      -> done
+- Hot Java compilation        -> done (simple one)
 - Hot Reloading (dev mode : using golo class loader, observe when a file change)
 - Compiled version
 - Keep-Alive connection

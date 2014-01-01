@@ -118,8 +118,6 @@ function define_error_redirection = {
 			<h1><%= data: message() %></h1>
 			<h2><%= data: description() %></h2>
 
-
-
 			<ul>
 			  <% foreach stkTrElement in data: stack() { %>
 			    <li>
