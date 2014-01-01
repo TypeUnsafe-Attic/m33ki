@@ -1,6 +1,8 @@
 /** @jsx React.DOM */
 
 var AnimalsList = React.createClass({
+  mixins: [window.ModelsList],
+  /*
   getInitialState: function() {
     return {data: []};
   },
@@ -16,6 +18,7 @@ var AnimalsList = React.createClass({
     this.loadAnimalsFromServer();
     setInterval(this.loadAnimalsFromServer, this.props.pollInterval);
   },
+  */
   render: function() {
     var animalsNodes = this.state.data.map(function(animal){
       return <li>{animal.id} - {animal.nickName}</li>;

@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 
 var HumanForm = React.createClass({
+  mixins: [window.ModelForm],
   onClick: function() {
     var firstName = this.refs.firstName.getDOMNode().value.trim();
     var lastName = this.refs.lastName.getDOMNode().value.trim();
@@ -8,12 +9,14 @@ var HumanForm = React.createClass({
       return false;
     }
     // send request to the server
-    this.postHuman(JSON.stringify({firstName: firstName, lastName: lastName}));
+    //this.postHuman(JSON.stringify({firstName: firstName, lastName: lastName}));
+    this.postModel(JSON.stringify({firstName: firstName, lastName: lastName}));
 
     this.refs.firstName.getDOMNode().value = '';
     this.refs.lastName.getDOMNode().value = '';
     return false;
   },
+  /*
   postHuman: function(human) {
     $.ajax({
       url: this.props.url,
@@ -24,6 +27,7 @@ var HumanForm = React.createClass({
       }.bind(this)
     });
   },
+  */
   render: function() {
     return (
       <div className="humanForm">

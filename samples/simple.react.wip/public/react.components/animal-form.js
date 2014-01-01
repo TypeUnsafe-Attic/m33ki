@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 
 var AnimalForm = React.createClass({
+  mixins: [window.ModelForm],
   onClick: function() {
     var nickName = this.refs.nickName.getDOMNode().value.trim();
     if (!nickName) {
@@ -8,11 +9,13 @@ var AnimalForm = React.createClass({
     }
 
     // send request to the server
-    this.postAnimal(JSON.stringify({nickName: nickName}));
+    //this.postAnimal(JSON.stringify({nickName: nickName}));
+    this.postModel(JSON.stringify({nickName: nickName}))
 
     this.refs.nickName.getDOMNode().value = '';
     return false;
   },
+  /*
   postAnimal: function(animal) {
     $.ajax({
       url: this.props.url,
@@ -23,6 +26,7 @@ var AnimalForm = React.createClass({
       }.bind(this)
     });
   },
+  */
   render: function() {
     return (
       <div className="animalForm">
