@@ -5,13 +5,13 @@ import java.lang.String;
 import java.lang.System;
 
 public class Human {
-  public String firstName=null;
-  public String lastName=null;
+  public String firstName="John";
+  public String lastName="Doe";
 
   public Human(String firstName, String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
-    System.out.println("Human Constructor : " + this.toString());
+    System.out.println(this.toString())
   }
 
   public Human() {

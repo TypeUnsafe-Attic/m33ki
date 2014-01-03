@@ -2,45 +2,29 @@ module hybridapp
 
 import m33ki.spark
 import m33ki.jackson
-import m33ki.javacompiler
+import m33ki.hot
 import java.lang.String
 
-----
-    let conf = map[
-      ["extends", "models.Human"],
-      ["overrides", map[
-        ["toString", |super, this| {
-          return super(this)
-        }]
-      ]]
-    ]
-    let h = AdapterFabric(): maker(conf): newInstance()
-----
 function main = |args| {
-
-  # java classes factory
-  let classFactory = loadClasses(
-      "samples/hybrid/app"
-    , list[
-        "models.Human"
-      , "controllers.Humans"
-      ]
-    , true # compilation if needed
-  )
-
-  let human = classFactory: load("models.Human"): getConstructor(String.class, String.class)
-  let humanNoParameter = classFactory: load("models.Human")
-
-  let humansController = classFactory: load("controllers.Humans")
-
-  let john = humanNoParameter: newInstance()
-
-  println(humansController: newInstance(): giveMeSomebody(): toString())
-
   initialize(): static("/samples/hybrid/public"): port(8888): error(true)
 
+  let DEV_MODE = true
+  if DEV_MODE {
+    listenForChangeThenCompile(
+      "samples/hybrid",
+      "samples/hybrid/app"
+    )
+  }
 
-  GET("/human", |request, response| {
+  # classLoader
+  let csl = getClassLoader("samples/hybrid/app")
+
+  # classes
+  let human = csl: loadClass("models.Human"): getConstructor(String.class, String.class)
+
+  let humansController = csl: loadClass("controllers.Humans")
+
+  GET("/bob", |request, response| {
     response:type("application/json")
 
     let bob = human: newInstance("Bob", "Morane")
@@ -52,5 +36,11 @@ function main = |args| {
 
   })
 
+  GET("/somebody", |request, response| {
+    response:type("application/json")
+    response: status(200) # 200: OK
+    return Json(): toJsonString(humansController: newInstance(): giveMeSomebody())
+
+  })
 
 }

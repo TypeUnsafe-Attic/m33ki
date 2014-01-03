@@ -10,7 +10,7 @@ import m33ki.hot
 function main = |args| {
 
   initialize(): static("/samples/simple.react.wip/public"): port(8888): error(true)
-  listenForChange("/samples/simple.react.wip/")
+  listenForChange("samples/simple.react.wip")
 
 
   CRUD(map[
