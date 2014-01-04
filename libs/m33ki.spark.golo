@@ -14,6 +14,7 @@ local function port = |port_number| -> setPort(port_number)
 function initialize = {
 
   #request.session().id()
+  #here logo
 
   return DynamicObject()
     : define("static", |this, path_static| {

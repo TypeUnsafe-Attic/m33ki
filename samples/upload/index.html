@@ -5,8 +5,12 @@
 </head>
 <body>
   <h1>Upload</h1>
+  <h2>With:</h2>
+  <h3><a href="http://jquery.com/">http://jquery.com/</a></h3>
+  <h3><a href="https://github.com/malsup/form">https://github.com/malsup/form</a></h3>
   <fieldset>
     <legend>Upload File</legend>
+
     <form action="/upload" method="post" enctype="multipart/form-data">
       <label for="filename_1">File: </label>
       <input id="filename_1" type="file" name="filename_1" size="50"/><br/>
@@ -15,6 +19,34 @@
       <br/>
       <input type="submit" value="Upload File"/>
     </form>
+
+    <div id="results"></div>
+
   </fieldset>
+
+  <script src="jquery-2.0.3.min.js"></script>
+  <script src="jquery.form.min.js"></script>
+  <script>
+    $(document).ready(function()
+    {
+      var out = $('#results');
+      $('form').ajaxForm({
+        beforeSubmit: function() {
+          out.html('<h3>Submitting...</h3>');
+        },
+        success: function(data) {
+
+          out.html('<h3>Your results:</h3>');
+          console.log(data)
+          var html = "<ul>"
+          for(var fileKey in data){
+            html+="<li>"+fileKey+" : "+data[fileKey]+"</li>"
+          }
+          html+="</ul>"
+          out.append(html);
+        }
+      });
+    })
+  </script>
 </body>
 </html>

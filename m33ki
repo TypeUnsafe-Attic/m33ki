@@ -1,0 +1,10 @@
+#!/bin/sh
+# === M33kI console" ===
+#PRG="$0"
+#echo "$PRG"
+#http://stackoverflow.com/questions/242538/unix-shell-script-find-out-which-directory-the-script-file-resides
+BASEDIR=$(dirname $0)
+#echo "Base directory: $BASEDIR"
+CWD=$(pwd)
+#echo "Current working directory: $CWD"
+java -jar $BASEDIR/m33ki.jar $BASEDIR $CWD

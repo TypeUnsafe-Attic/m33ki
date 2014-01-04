@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <link rel="stylesheet" href="uikit-2.0.0/css/uikit.min.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="tm-middle">
+  <div class="uk-container uk-container-center">
+    <h1>Demo</h1>
+
+    <div class="uk-panel uk-panel-box uk-width-medium-1-3">
+      <div class="uk-panel-badge uk-badge uk-badge-danger">GET</div>
+      <button id="btngetall" class="uk-button uk-button-primary" type="button">GET "all"</button>
+      <pre><code id="getall"></code></pre>
+    </div>
+
+    <hr class="uk-article-divider">
+
+    <div class="uk-panel uk-panel-box uk-width-medium-1-3">
+      <div class="uk-panel-badge uk-badge uk-badge-danger">GET</div>
+      <button id="btngetid" class="uk-button uk-button-primary" type="button">GET "with id"</button>
+      <pre><code id="getid"></code></pre>
+    </div>
+
+    <hr class="uk-article-divider">
+
+    <div class="uk-panel uk-panel-box uk-width-medium-1-3">
+      <div class="uk-panel-badge uk-badge uk-badge-danger">POST</div>
+      <button id="btnpostdata" class="uk-button uk-button-primary" type="button">POST data</button>
+      <pre><code id="postdata"></code></pre>
+    </div>
+
+    <hr class="uk-article-divider">
+
+    <div class="uk-panel uk-panel-box uk-width-medium-1-3">
+      <div class="uk-panel-badge uk-badge uk-badge-danger">PUT</div>
+      <button id="btnputdata" class="uk-button uk-button-primary" type="button">PUT data</button>
+      <pre><code id="putdata"></code></pre>
+    </div>
+
+    <hr class="uk-article-divider">
+
+    <div class="uk-panel uk-panel-box uk-width-medium-1-3">
+      <div class="uk-panel-badge uk-badge uk-badge-danger">DELETE</div>
+      <button id="btndeleteid" class="uk-button uk-button-primary" type="button">DELETE "with id"</button>
+      <pre><code id="deleteid"></code></pre>
+    </div>
+
+
+  </div>
+</div>
+
+
+
+<script src="js/vendors/jquery-2.0.3.min.js"></script>
+<script src="uikit-2.0.0/js/uikit.min.js"></script>
+<script>
+  $(function() {
+    /* When ready */
+
+    $.get("about", function(data){
+      console.log(data)
+      $("h1").html(data.message);
+    });
+
+    $("#btngetall").click(function(){
+      $.ajax({
+        type: "GET",
+        url: "models",
+        success: function(data){
+          $("#getall").html(JSON.stringify(data));
+        }
+      });
+    });
+
+    $("#btngetid").click(function(){
+      $.ajax({
+        type: "GET",
+        url: "models/1234567890",
+        success: function(data){
+          $("#getid").html(JSON.stringify(data));
+        }
+      });
+    });
+
+    $("#btnpostdata").click(function(){
+      $.ajax({
+        type: "POST",
+        url: "models",
+        data: JSON.stringify({firstName : "Bob", lastName : "Morane"}),
+        dataType: "json",
+        success: function(data){
+          $("#postdata").html(JSON.stringify(data));
+        }
+      });
+    });
+
+    $("#btnputdata").click(function(){
+      $.ajax({
+        type: "PUT",
+        url: "models/1234567890",
+        data: JSON.stringify({firstName : "BOB", lastName : "MORANE", id : "1234567890"}),
+        dataType: "json",
+        success: function(data){
+          $("#putdata").html(JSON.stringify(data));
+        }
+      });
+    });
+
+    $("#btndeleteid").click(function(){
+      $.ajax({
+        type: "DELETE",
+        url: "models/1234567890",
+        success: function(data){
+          $("#deleteid").html(JSON.stringify(data));
+        }
+      });
+    });
+
+
+  });
+</script>
+</body>
+</html>

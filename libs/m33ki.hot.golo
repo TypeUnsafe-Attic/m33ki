@@ -15,11 +15,18 @@ import java.net.URLClassLoader
 #TODO: rename(?)
 #TODO: listenForJavaChange, GoloChange, etc. ...
 function listenForChange = |path| {
+  println("Listening on " + java.io.File("."): getCanonicalPath() + "/" + path)
   let conf = map[
     ["extends", "org.apache.commons.jci.listeners.FileChangeListener"],
     ["implements", map[
       ["onDirectoryChange", |this, pDir| {
         println("Content in " + pDir: getName() + " has changed ....")
+        println("Application is restarting ...")
+        #java.lang.Runtime.getRuntime(): halt(1)
+        java.lang.System.exit(1)
+      }],
+      ["onFileChange", |this, pFile| {
+        println("File " + pFile: getName() + " has changed ....")
         println("Application is restarting ...")
         #java.lang.Runtime.getRuntime(): halt(1)
         java.lang.System.exit(1)
@@ -104,15 +111,27 @@ function JCompiler = |sourcePath, targetPath, classes| {
 - parameters : String path (start), String extension, list[] listOfFiles, String root (root path)
 ----
 function filesDiscover = |path, extension, listOfFiles, root| {
+  #println("path : " + path + " root : " + root)
+
   let start_root = java.io.File(path)
   let files = start_root: listFiles(): asList()
 
   files: each(|file|{
     if file: isDirectory() is true {
+      #println("this is a directory : " + file: getAbsolutePath())
       filesDiscover(file: getAbsolutePath(), extension, listOfFiles, root)
     } else {
-      if file: getAbsoluteFile(): getName(): endsWith("."+extension) {
-        var javaFileName = file: getAbsoluteFile(): toString(): split(root):get(1)
+      #println("this is a file : " + file: getAbsoluteFile(): getName())
+      #println("java file ? : " + file: getAbsoluteFile(): getName(): endsWith("." + extension))
+      #println("split : " + file: getAbsolutePath(): toString(): split(root): toString())
+      #println("split 0 : " + file: getAbsolutePath(): toString(): split(root): get(0))
+      #println("split 1 : " + file: getAbsolutePath(): toString(): split(root): get(1))
+      if file: getAbsoluteFile(): getName(): endsWith("." + extension) is true {
+
+        var javaFileName = file: getAbsolutePath(): toString(): split(root): get(1)
+
+        #TODO : other method because pb if app in the application name
+
         println("--> " + javaFileName)
         listOfFiles: add(javaFileName)
       }
@@ -160,6 +179,16 @@ function listenForChangeThenCompile = |path, javaSourcePath| {
       ["onDirectoryChange", |this, pDir| {
         println("Content in " + pDir: getName() + " has changed ....")
 
+        #println("Java classes compiling ...")
+        #javaCompile(javaSourcePath)
+
+        println("Application is restarting ...")
+        #java.lang.Runtime.getRuntime(): halt(1)
+        java.lang.System.exit(1)
+      }],
+      ["onFileChange", |this, pFile| {
+        println("File " + pFile: getName() + " has changed ....")
+
         println("Java classes compiling ...")
         javaCompile(javaSourcePath)
 
@@ -191,4 +220,19 @@ function getClassLoader = |targetPath| {
 
   let cl = URLClassLoader(urls)
   return cl
+}
+
+function classLoader = |targetPath| {
+  let cl = getClassLoader(targetPath)
+
+  return DynamicObject()
+    :define("load", |this, className|{
+      var klass = null
+      try {
+        klass = cl: loadClass(className)
+        return klass
+      } catch (e){
+        println("Update source code and save ...")
+      }
+    })
 }

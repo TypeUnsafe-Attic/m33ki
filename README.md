@@ -18,6 +18,22 @@ M33ki is a set of Golo libraries (see `/libs` directory) using :
 
 >>M33ki webapps are designed to run on small devices (ie: RaspberryPi)
 
+##Installation
+
+
+
+    TODO: (prérequis)
+    gitclone
+
+    sudo pico ~/.bash_profile
+
+    #=== M33ki ===
+    M33KI_HOME=/Users/k33g_org/Dropbox/Public/TYPEUNSAFE/m33ki
+    export M33KI_HOME
+    export PATH=$PATH:$M33KI_HOME
+
+
+
 ##How to create your first M33ki application?
 
 - Create a directory `<application_name>`
