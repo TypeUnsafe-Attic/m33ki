@@ -20,16 +20,16 @@ http://developer.yahoo.com/social/rest_api_guide/http-response-codes.html
 http://yobriefca.se/blog/2012/03/20/tinkering-with-spark-a-micro-web-framework-for-java/
 search about filter
 ----
-function CRUD = |collections| {
+function CRUD = |collections, securityKey| {
 
   # --- SECURITY ---
   var SECURED = false
   let users = collections: get("users")
 
-  if users isnt null {
+  if users isnt null { # or securityKey
     println("=== SECURED MODE ===")
-    AUTHENTICATION(users)
-    ADMIN(users)
+    AUTHENTICATION(users, securityKey)
+    ADMIN(users, securityKey)
     SECURED = true
   }
 

@@ -16,7 +16,7 @@ function main = |args| {
   let executor = getExecutor()
 
   initialize(): static("/public"): port(8888): error(true)
-  listenForChange("") # listen to root of the webapp
+    : listenForChange("") # listen to root of the webapp
 
   let a = ValueObject(0)
   let b = ValueObject(0)

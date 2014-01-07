@@ -3,6 +3,7 @@ module m33ki.spark
 import m33ki.jackson
 import m33ki.strings
 
+import m33ki.hot
 
 import spark.Spark
 import java.io.File
@@ -35,6 +36,15 @@ function initialize = {
       })
     : define("error", |this, generic_error_management| {
         if generic_error_management is true { define_error_redirection() }
+        return this
+      })
+    : define("listenForChange", |this, path| {
+        listenForChange(path) # from m33ki.hot | hot reloading of golo scripts
+        return this
+      })
+    : define("listenForChangeThenCompile", |this, path, javaSourcePath| {
+        listenForChangeThenCompile(path, javaSourcePath) # from m33ki.hot | hot reloading of golo scripts and java file + compilation
+        return this
       })
 
 }

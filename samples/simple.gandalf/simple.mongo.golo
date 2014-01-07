@@ -36,8 +36,10 @@ function MongoUsers = -> DynamicObject()
 
 
 function main = |args| {
+  let securityKey = "ultimatelanguageisgolo"
 
-  initialize(): static("/samples/simple.gandalf/public"): port(8888): error(true)
+  #initialize(): static("/samples/simple.gandalf/public"): port(8888): error(true)
+  initialize(): static("/public"): port(8888): error(true): listenForChange("")
 
   let users = MongoUsers()
 
@@ -51,7 +53,7 @@ function main = |args| {
     # create a default admin
     println("--> Admin creation ...")
     let newAdmin = MongoUser()
-      : pwd("admin")
+      : pwd(encrypt("admin", securityKey))
       : pseudo("admin")
       : admin(true)
       : canRead(true)
@@ -78,6 +80,6 @@ function main = |args| {
       ["users", users]          # "users" key activates security
     , ["humans", Humans()]
     , ["animals", Animals()]
-  ])
+  ], securityKey)
 }
 

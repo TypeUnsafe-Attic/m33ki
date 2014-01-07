@@ -116,6 +116,13 @@
             <version>1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jasypt</groupId>
+            <artifactId>jasypt</artifactId>
+            <version>1.9.1</version>
+            <classifier>lite</classifier>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     
 </project>

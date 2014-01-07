@@ -2,13 +2,11 @@
 
 ##Run sample :
 
-`golo golo --classpath jars/*.jar --files libs/*.golo samples/simple.gandalf/simple.golo`
+  ./go.sh
 
->>WIP : this sample is using "memory" collections, MongoDb version has not been tested yet
+Mongo Version :
 
-Mongo Version (without authentication) :
-
-`golo golo --classpath jars/*.jar --files libs/*.golo samples/simple.gandalf/simple.mongo.golo`
+  ./gomongo.sh
 
 ##Create a Gandalf Application
 
@@ -30,7 +28,7 @@ function main = |args| {
   CRUD(map[
       ["humans", Collection()]
     , ["animals", Collection()]
-  ])
+  ], null)
 }
 ```
 
@@ -75,7 +73,7 @@ function main = |args| {
   CRUD(map[
       ["humans", Humans()]
     , ["animals", Animals()]
-  ])
+  ], null)
 }
 ```
 
@@ -158,12 +156,12 @@ import m33ki.gandalf
 import m33ki.authentication
 
 function main = |args| {
-
+  let securityKey = "ultimatelanguageisgolo"
   let users = Collection()
 
   users
-    : addItem(User(): pseudo("admin"): pwd("admin"): rights(true, true, true, true): admin(true))
-    : addItem(User(): pseudo("bob"): pwd("bob"): rights(true, true, true, false))
+    : addItem(User(): pseudo("admin"): pwd(encrypt("admin", securityKey)): rights(true, true, true, true): admin(true))
+    : addItem(User(): pseudo("bob"): pwd(encrypt("bob", securityKey)): rights(true, false, false, false))
 
   # rights (read, create, update, delete)
 
@@ -175,7 +173,7 @@ function main = |args| {
       ["users", users]          # "users" key activates security
     , ["humans", Collection()]
     , ["animals", Collection()]
-  ])
+  ], securityKey)
 }
 ```
 

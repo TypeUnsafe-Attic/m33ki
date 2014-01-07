@@ -5,7 +5,10 @@
   <link href="css/simple.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-
+  <div class="content">Admin authentication:
+    <button id="btnAuthenticate">Authenticate</button>
+  </div>
+  <hr>
   <div class="content">
     <h1>New Human</h1>
     <form>
@@ -90,6 +93,17 @@
           ].join(""));
           $("input").val("")
         },
+        dataType: "json"
+      });
+    });
+
+    $("#btnAuthenticate").click(function() {
+      $.ajax({
+        type: "POST",
+        url: "login",
+        data: JSON.stringify({pseudo:"admin", password:"admin"}),
+        success: function(data){ console.log("success", data); },
+        error: function(err){ console.log("error", err); },
         dataType: "json"
       });
     });
