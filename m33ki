@@ -1,5 +1,5 @@
 #!/bin/sh
-# === M33kI console" ===
+# === M33kI console ===
 #PRG="$0"
 #echo "$PRG"
 #http://stackoverflow.com/questions/242538/unix-shell-script-find-out-which-directory-the-script-file-resides

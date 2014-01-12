@@ -3,4 +3,4 @@
 /.idea/*
 *.iml
 /m33ki-run/*
-*.jar
+/console/target/*
