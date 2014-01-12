@@ -9,7 +9,7 @@
 body {
     font: 400 14px/1.6 "Open Sans", sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 10px;
     color: #777;
 }
 
@@ -52,14 +52,14 @@ section section p {
 }
 
 h2 {
-    margin-top: 80px;
+    margin-top: 10px;
     font-weight: bold;
 }
 
 h3 {
-    margin-top: 40px;
-    padding-top: 50px;
-    padding-bottom: 5px;
+    margin-top: 10px;
+    /*padding-top: 50px;
+    padding-bottom: 5px;*/
     font-weight: bold;
 }
 
@@ -113,23 +113,4 @@ pre code {
     font-family: monaco, monospace;
     font-size: .8em;
 }
-
-code .comment { color: #888 }
-code .init { color: #2F6FAD }
-code .string { color: #5890AD }
-code .keyword { color: #8A6343 }
-code .number { color: #2F6FAD }
-
-
-
-
-
-
-
-
-
-
-
-
-
 

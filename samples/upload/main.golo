@@ -14,7 +14,7 @@ function main = |args| {
   initialize(): static("/samples/upload"): port(8888): error(true)
 
   POST("/upload", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     let data = DynamicObject(): files(map[])
 
     let files = upload(request): each(|file| {

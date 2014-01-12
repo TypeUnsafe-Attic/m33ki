@@ -28,7 +28,7 @@ function main = |args| {
   println("WebSocket Server connected on " + myServer: port())
 
   GET("/about", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     return Json(): toJsonString(map[
       ["websockets_with", "https://github.com/TooTallNate/Java-WebSocket"]
     ])

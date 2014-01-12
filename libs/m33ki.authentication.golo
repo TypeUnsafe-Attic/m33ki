@@ -7,9 +7,17 @@ import m33ki.collections
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 
-#TODO
-#function getSecurityKey = -> "ultimatelanguageisgolo"
+# encrypt
+----
+####Description
 
+`encrypt(something, withSecurityKey)` function returns an encrypted string
+
+####Parameters
+
+- `something` : String to encrypt
+- `withSecurityKey` : security key
+----
 function encrypt = |something, withSecurityKey| {
   let encryptor = StandardPBEStringEncryptor()
   encryptor: setPassword(withSecurityKey)
@@ -18,6 +26,17 @@ function encrypt = |something, withSecurityKey| {
   return encryptedValue
 }
 
+# decrypt
+----
+####Description
+
+`decrypt(something, withSecurityKey)` function returns a decrypted string
+
+####Parameters
+
+- `something` : String to decrypt
+- `withSecurityKey` : security key
+----
 function decrypt = |something, withSecurityKey| {
   let encryptor = StandardPBEStringEncryptor()
   encryptor: setPassword(withSecurityKey)
@@ -26,9 +45,35 @@ function decrypt = |something, withSecurityKey| {
   return decryptedValue
 }
 
+# Session
+----
+####Description
+
+`Session(req)` function returns a DynamicObject with properties of current session (Spark request: session()).
+
+*Remark: if session object doesn't exist, it will be created*
+
+####Parameter
+
+You have to pass the Spark request object to `Session()` function
+
+####Properties of Session DynamicObject
+
+Each property of the DynamicObject is a session attribute :
+
+- `id()`
+- `pseudo()`
+- `read()`
+- `create()`
+- `update()`
+- `delete()`
+- `admin()`
+
+----
 function Session = |request| {
   let session = request: session(true)
   return DynamicObject()
+    : id(session: attribute("id"))
     : pseudo(session: attribute("pseudo"))
     : read(session: attribute("read"))
     : create(session: attribute("create"))
@@ -38,6 +83,28 @@ function Session = |request| {
 }
 
 # Generic User
+----
+####Description
+
+`User()` function returns a `m33ki.models.Model()` with default `fields(map[])` :
+
+    map[
+        ["pseudo", "john"]
+      , ["firstName", "John"]
+      , ["lastName", "Doe"]
+      , ["password", null]
+      , ["read", true]
+      , ["create", false]
+      , ["update", false]
+      , ["delete", false]
+      , ["admin", false]
+    ]
+
+####User Methods (+ Model methods)
+
+- `rights(canRead, canCreate, canUpdate, canDelete)` : set fields values of `read, create, update, delete`
+
+----
 function User = {
 
   return Model()
@@ -91,21 +158,80 @@ function User = {
 
 }
 
+# AUTHENTICATION()
+----
+####Description
 
-function AUTHENTICATION = |users, securityKey| {
+`AUTHENTICATION()` method is a helper about users authentication. It creates necessary REST routes about :
+
+- user login
+- user logout
+- authentication user checking
+
+####Parameters
+
+- `users` : this is a `m33ki.collections.Collection()`. It can mixin a `m33ki.mongodb.MongoCollection(MongoModel)`
+- `securityKey` : allow encrypt/decrypt user password
+- `onLogin` : callback on user login : passing parameter : `user Model()` and `authenticated` (`true` or `false`)
+- `onLogout` : callback on user logout : passing parameters : `user_id`, `user_pseudo`
+- `ifAuthenticated` : callback on authentication checking : passing parameters : `user_id`, `user_pseudo` | `null` and `null` if failed
+
+####Snippet
+
+    AUTHENTICATION(
+        AppUsers()
+      , getSecurityKey()
+      , |user, authenticated| { # on LogIn
+          println(user: getField("pseudo") + " is authenticated : " + authenticated)
+        }
+      , |id, pseudo| { # on LogOut
+          println(pseudo + "[" + id +  "] is gone ...")
+        }
+      , |id, pseudo| { # Authentication checking
+          if id isnt null {
+            println(pseudo +  " is online and authenticated ...")
+          } else {
+            println("Current user isn't authenticated ...")
+          }
+        }
+    )
+
+####Routes
+
+If you're using `AUTHENTICATION` then you get 3 routes :
+
+- `/login` to connect user (`POST` request)
+- `/logout` (`GET` request)
+- `/authenticated` to check if current user is connected (`GET` request)
+
+#####Calling `/login` with jQuery (`$.ajax`)
+
+    $.ajax({
+      type: "POST",
+      url: "login",
+      data: JSON.stringify({pseudo:"admin", password:"admin"}),
+      success: function(data){ console.log("success", data); },
+      error: function(err){ console.log("error", err); },
+      dataType: "json"
+    });
+
+#####Calling `/logout` with jQuery (`$.ajax`)
+
+    $.get("authenticated", function(data){ console.log(data); })
+
+    //return Object {authenticated: true} (or false) + pseudo if true (null if false)
+
+#####Calling `/authenticated` with jQuery (`$.ajax`)
+
+    $.get("logout", function(data){ console.log(data); })
+
+----
+function AUTHENTICATION = |users, securityKey, onLogin, onLogout, ifAuthenticated| {
 
   println("--- Define Authentication routes ---")
 
   # Login
-  #$.ajax({
-  #	type: "POST",
-  #	url: "login",
-  #	data: JSON.stringify({pseudo:"admin", password:"admin"}),
-  #	success: function(data){ console.log("success", data); },
-  #	error: function(err){ console.log("error", err); },
-  #	dataType: "json"
-  #});
-  # OK for memory Users and mongoDb USers
+  # OK for memory Users and mongoDb Users
   POST("/login", |request, response| {
     println("--> authentication attempt")
     response:type("application/json")
@@ -115,18 +241,22 @@ function AUTHENTICATION = |users, securityKey| {
     println("--> user.pseudo : " + tmpUser: getField("pseudo"))
     println("--> users :" + users: models())
 
-    # if memory collection
-    let searchUser = users: find("pseudo", tmpUser: getField("pseudo")): toModelsList(): getFirst()
+    #let searchUser = users: find("pseudo", tmpUser: getField("pseudo")): toModelsList(): getFirst()
 
-    println("--> searchUser : " + searchUser: getField("pseudo") )
-
+    let searchUsers = users: find("pseudo", tmpUser: getField("pseudo"))
     let session = request: session(true)
 
-    if searchUser isnt null {
+    # searchUsers is a collection
+    if searchUsers: size() > 0 {
+      let searchUser = searchUsers: toModelsList(): getFirst()
+      println("--> searchUser : " + searchUser: getField("pseudo") )
+      println("--> searchUser : " + searchUser: getField("id") )
+
 
       if decrypt(searchUser: getField("password"), securityKey): equals(tmpUser: getField("password")) {
         response: status(200) # OK
 
+        session: attribute("id",  searchUser: getField("id"))
         session: attribute("pseudo",  searchUser: getField("pseudo"))
         session: attribute("read",    searchUser: getField("read"))
         session: attribute("create",  searchUser: getField("create"))
@@ -134,9 +264,15 @@ function AUTHENTICATION = |users, securityKey| {
         session: attribute("delete",  searchUser: getField("delete"))
         session: attribute("admin",   searchUser: getField("admin"))
 
+        if onLogin isnt null {
+          onLogin(searchUser, true)
+        }
+
         return Json(): toJsonString(map[["authenticated", true]])
+
       } else {
 
+        session: removeAttribute("id")
         session: removeAttribute("pseudo")
         session: removeAttribute("read")
         session: removeAttribute("create")
@@ -144,11 +280,19 @@ function AUTHENTICATION = |users, securityKey| {
         session: removeAttribute("delete")
         session: removeAttribute("admin")
 
-        response: status(403) # forbidden
+        if onLogin isnt null {
+          onLogin(tmpUser, false)
+        }
+
+        response: status(401) # not authenticated
+        #response: status(403) # forbidden
         return Json(): toJsonString(map[["authenticated", false]])
       }
-    } else {
 
+    } else  {
+
+
+      session: removeAttribute("id")
       session: removeAttribute("pseudo")
       session: removeAttribute("read")
       session: removeAttribute("create")
@@ -156,9 +300,16 @@ function AUTHENTICATION = |users, securityKey| {
       session: removeAttribute("delete")
       session: removeAttribute("admin")
 
-      response: status(403) # forbidden
+        if onLogin isnt null {
+          onLogin(null)
+        }
+
+      response: status(401) # not authenticated
+      #response: status(403) # forbidden
       return Json(): toJsonString(map[["authenticated", false]])
+
     }
+
 
   })
 
@@ -171,10 +322,20 @@ function AUTHENTICATION = |users, securityKey| {
 
     if session: attribute("pseudo") isnt null {
       response: status(200) # OK
-      return Json(): toJsonString(map[["authenticated", true]])
+
+      if ifAuthenticated isnt null {
+        ifAuthenticated(session: attribute("id"), session: attribute("pseudo"))
+      }
+
+      return Json(): toJsonString(map[["authenticated", true], ["pseudo", session: attribute("pseudo")]])
     } else {
-      response: status(200) # OK
-      return Json(): toJsonString(map[["authenticated", false]])
+      response: status(401) # not authenticated
+
+      if ifAuthenticated isnt null {
+        ifAuthenticated(null, null)
+      }
+
+      return Json(): toJsonString(map[["authenticated", false], ["pseudo", null]])
     }
   })
 
@@ -183,6 +344,11 @@ function AUTHENTICATION = |users, securityKey| {
     response:type("application/json")
     let session = request: session()
 
+    if onLogout isnt null {
+      onLogout(session: attribute("id"), session: attribute("pseudo"))
+    }
+
+    session: removeAttribute("id")
     session: removeAttribute("pseudo")
     session: removeAttribute("read")
     session: removeAttribute("create")
@@ -195,6 +361,91 @@ function AUTHENTICATION = |users, securityKey| {
 
 }
 
+# ADMIN()
+----
+####Description
+
+`ADMIN()` function is a quick helper to get REST routes about users management. It works with memory collections (`m33ki.collections.Collection()`) and MongoDb collections (`m33ki.mongodb.MongoCollection(MongoModel)`).
+
+####Parameters
+
+- `users` : this is a `m33ki.collections.Collection()`. It can mixin a `m33ki.mongodb.MongoCollection(MongoModel)`
+- `securityKey` : allow encrypt/decrypt user password
+
+####Routes
+
+- Create user : this is a `POST` request : `/users`, you have to be login as admin
+- Retrieve all users : this is a `GET` request : `/users`, you have to be login as admin
+- Retrieve a user by id : this is a `GET` request : `/users/:id`, you have to be login as admin
+- Retrieve a user by pseudo : this is a `GET` request : `/users/pseudo/:pseudo`, you have to be login as admin
+- **(WIP:TO BE TESTED)** Update a user by id : this is a `PUT` request : `/users/:id`, you have to be login as admin
+- Delete a user by id : this is a `DELETE` request : `/users/:id`, you have to be login as admin
+
+####Calling Admin Routes with jQuery (`$.ajax`)
+
+#####Create a user :
+
+    $.ajax({
+      type: "POST",
+      url: "users",
+      data: JSON.stringify({
+          pseudo 		: "phil"
+        ,	password 	: "phil"
+        ,	create 		: true
+        ,	read 		: true
+        ,	update 		: true
+        ,	delete 		: true
+        ,	admin 		: false
+      }),
+      success: function(data){ console.log("success", data); },
+      error: function(err){ console.log("error", err); },
+      dataType: "json"
+    });
+
+#####Get all users :
+
+    $.ajax({
+      type: "GET",
+      url: "users",
+      success: function(users){ console.log(users) }
+    });
+
+#####Get a user by pseudo :
+
+    $.ajax({
+      type: "GET",
+      url: "users/pseudo/phil",
+      success: function(human){ console.log(human) }
+    });
+
+#####Update a user (you need id of user):
+
+    $.ajax({
+      type: "PUT",
+      url: "users/52b6baaa3004530ace382ae1",
+      data: JSON.stringify({
+          pseudo 		: "phil"
+        ,	password 	: "philip"
+        ,	create 		: true
+        ,	read 		: true
+        ,	update 		: true
+        ,	delete 		: true
+        ,	admin 		: true
+      }),
+      success: function(data){ console.log("success", data); },
+      error: function(err){ console.log("error", err); },
+      dataType: "json"
+    });
+
+#####Delete a user (you need id of user):
+
+    $.ajax({
+      type: "DELETE",
+      url: "users/52b6baaa3004530ace382ae1",
+      success: function(message){ console.log(message) }
+    });
+
+----
 function ADMIN = |users, securityKey| {
   #TODO: test id users: kind("memory") is true
 

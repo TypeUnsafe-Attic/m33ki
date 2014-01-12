@@ -20,13 +20,13 @@ function main = |args| {
 
   # this is a json service ... very simple json service
   GET("/about", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     return Json(): toJsonString(map[["message", "Cool ;) !"]])
   })
 
   # an other service ...
   GET("/infos", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     println("Hello")
     return Json(): toJsonString(map[["infos", "this is an information"]])
   })

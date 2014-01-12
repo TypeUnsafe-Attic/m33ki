@@ -28,7 +28,7 @@ function CRUD = |collections, securityKey| {
 
   if users isnt null { # or securityKey
     println("=== SECURED MODE ===")
-    AUTHENTICATION(users, securityKey)
+    AUTHENTICATION(users, securityKey, null, null, null)
     ADMIN(users, securityKey)
     SECURED = true
   }

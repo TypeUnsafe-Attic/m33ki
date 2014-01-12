@@ -15,7 +15,7 @@ function main = |args| {
 
   # my first little json service
   GET("/about", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     response: status(200)
     return Json(): toJsonString(map[["message", "Hello World with M33ki!"]])
   })

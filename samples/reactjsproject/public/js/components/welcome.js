@@ -5,7 +5,7 @@ define(["react"], function (React) {
 
     render: function() {
       return (
-        <h1>Welcome {this.props.message}</h1>
+        <h1>Welcome to {this.props.message}</h1>
         );
     }
   });

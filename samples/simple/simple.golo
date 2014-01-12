@@ -34,7 +34,7 @@ function main = |args| {
 
   # Create a human
   POST("/humans", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     let human = Model(): fromJsonString(request: body())
     human: generateId()
     humans: addItem(human)
@@ -45,13 +45,13 @@ function main = |args| {
 
   # Retrieve all humans
   GET("/humans", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     return humans: toJsonString()
   })
 
   # Retrieve a human by id
   GET("/humans/:id", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
 
     let human = humans: getItem(request: params(":id"))
 

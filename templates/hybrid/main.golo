@@ -27,7 +27,7 @@ function main = |args| {
   let ApplicationController = csl: load("controllers.Application")
 
   GET("/bob", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     let bob = human: newInstance("Bob", "Morane")
     println(bob: firstName() + " " + bob: lastName())
     println(bob: toString())
@@ -36,13 +36,13 @@ function main = |args| {
   })
 
   GET("/somebody", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     response: status(200) # 200: OK
     return Json(): toJsonString(ApplicationController: newInstance(): giveMeSomebody())
   })
 
   GET("/about", |request, response| {
-    response:type("text/html")
+    response: type("text/html")
     response: status(200) # 200: OK
     return ApplicationController: newInstance(): about()
   })

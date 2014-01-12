@@ -6,7 +6,7 @@ import m33ki.valueobjects
 function getExecutor = -> m33ki.futures.getExecutor()
 
 # Observer structure
-struct observer = { _executor, _observable, _onChange, future }
+struct observer = { _executor, _observable, _onChange, future, delay, members }
 
 augment m33ki.observers.types.observer {
   function executor = |this, executor| {
@@ -24,12 +24,15 @@ augment m33ki.observers.types.observer {
     return this
   }
   function observable = |this, observable| {
-    require(observable: get("value") isnt null, "observable must have a 'value' property.")
+    #require(observable: get("value") isnt null, "observable must have a 'value' property.")
     this: _observable(observable)
     return this
   }
-  function observe = |this, delay| {
+  function observe = |this| {
+    require(this: _observable(): get("value") isnt null, "observable must have a 'value' property.")
     let old_observable = ValueObject(this: _observable(): value())
+
+    let delay =  this?: delay() orIfNull 100_L
 
     let observer_future = Future(this: _executor(), |message, self| {
       self: result(false) # don't forget that Future is a DynamicObject
@@ -42,6 +45,7 @@ augment m33ki.observers.types.observer {
           }
           old_observable: value(this: _observable(): value())
         }
+
         java.lang.Thread.sleep(delay)
       }
       println("this is the end ...")
@@ -51,8 +55,40 @@ augment m33ki.observers.types.observer {
     observer_future: submit(null)
     return this
   }
-  function observe = |this| {
-    return this: observe(100_L)
+  function observe = |this, members| {
+    let old_observable =  ValueObject(this: _observable(): copy())
+    this: members(members)
+
+    let delay =  this?: delay() orIfNull 100_L
+
+    #println(delay)
+
+    let observer_future = Future(this: _executor(), |message, self| {
+      self: result(false) # don't forget that Future is a DynamicObject
+
+      while self: result() is false {
+
+        this: members(): each(|member|{
+
+          if this: _observable(): get(member): equals(old_observable: value(): get(member)) is false {
+            try {
+              this: _onChange()(this: _observable(), old_observable: value(), self)
+            } catch(e) {
+              e: printStackTrace()
+            }
+            old_observable: value(this: _observable(): copy())
+          }
+
+        })
+
+        java.lang.Thread.sleep(delay)
+      }
+      println("this is the end ...")
+      self: result(true)
+    })
+    this: future(observer_future)
+    observer_future: submit(null)
+    return this
   }
   function kill = |this| {
     this: future(): result(true)
@@ -60,11 +96,16 @@ augment m33ki.observers.types.observer {
   }
 }
 ----
-# Observer
+####Description
 
-##Use, ie:
+`Observer()` function returns an augmented structure (kind of class) to observing changes on ValueObjects or DynamicObjects.
+
+#####Use, ie:
 
     let executor = getExecutor()
+
+    let a = ValueObject(0)
+
     let obs1 = Observer(executor)
       : observable(a)
       : onChange(|currentValue, oldValue, thatObserver| {
@@ -79,19 +120,43 @@ augment m33ki.observers.types.observer {
         })
       : observe()
 
-##Constructor `Observer(executor)`
+or :
+
+    let dyno = DynamicObject(): info(""): total(0)
+
+    let obs2 = Observer(executor)
+      : observable(dyno): delay(3000_L)
+      : onChange(|currentValue, oldValue, thatObserver| {
+
+          let data = [currentValue, oldValue]
+          println(
+            """
+            DynamicObject DYNO has changed,
+              old : <%= data: get(1): info() %> | <%= data: get(1): total() %>,
+              new : <%= data: get(0): info() %> | <%= data: get(0): total() %>
+            """:
+            T("data", data)
+          )
+        })
+      : observe(["info", "total"])
+
+- see : [ValueObject](valueobjects.html)
+- see : ["":T() (String template)](strings.html)
+
+####Constructor `Observer(executor)`
 
 Parameter: java.util.concurrent.ExecutorService.class
 
-##Properties
+####Properties
 
-- `observable()` : this is a DynamicObject, or a struct or a m33ki.valueobjects.ValueObject with a `value` member
+- `observable(observableObject)` : this is a DynamicObject, or a struct or a m33ki.valueobjects.ValueObject with a `value` member
+- `delay(delay)` : delay unit is milliseconds, ie: `delay(500_L)`, default is `100_L`
 
-##Methods
+####Methods
 
 - `onChange(|currentValue, oldValue, thatObserver| {})` this is a callback closure, triggered when value of observable change
 - `observe()`
-- `observe(delay)` : delay unit is milliseconds, ie: `observe(500_L)`, default is `100_L` ms
+- `observe(tuple_of_members_to_observe)`
 - `kill()` : observer stops observes observable
 
 ----

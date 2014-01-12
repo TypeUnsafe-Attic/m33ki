@@ -202,7 +202,7 @@ $.ajax({
 ```javascript
 $.get("authenticated", function(data){ console.log(data); })
 
-//return Object {authenticated: true} (or false)
+//return Object {authenticated: true} (or false) + pseudo if true (null if false)
 ```
 
 ####Authentication : Logout

@@ -15,7 +15,7 @@ function main = |args| {
   var result = DynamicObject(): value(0)
 
   GET("/promise", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
 
     Promise(executor)
     : task(|arg| {
@@ -47,7 +47,7 @@ function main = |args| {
   })
 
   GET("/resultpromise", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     response: status(200) # 200: OK
     return Json(): message(result: value())
 

@@ -25,7 +25,7 @@ function main = |args| {
   let humansController = csl: loadClass("controllers.Humans")
 
   GET("/bob", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
 
     let bob = human: newInstance("Bob", "Morane")
     println(bob: firstName() + " " + bob: lastName())
@@ -37,7 +37,7 @@ function main = |args| {
   })
 
   GET("/somebody", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     response: status(200) # 200: OK
     return Json(): toJsonString(humansController: newInstance(): giveMeSomebody())
 

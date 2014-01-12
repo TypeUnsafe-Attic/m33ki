@@ -5,6 +5,12 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.IOException
 
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
+
+
 ----
 #M33ki console
 
@@ -35,6 +41,11 @@ Then, type `m33ki` and follow instructions
 function main = |args| {
   require(args: size(): equals(2), "Two arguments needed!")
 
+  let OS = java.lang.System.getProperty("os.name"): toLowerCase()
+  let isWindows = -> OS: indexOf("win") >= 0
+  let isMac = -> OS: indexOf("mac") >= 0
+  let isLinux = -> (OS: indexOf("nix") >= 0) or (OS: indexOf("nux") >= 0)
+
   println("""
    _____  ________ ________  __   .__
   /     \ \_____  \\_____  \|  | _|__|
@@ -42,8 +53,11 @@ function main = |args| {
 /    Y    \/       \/       \    <|  |
 \____|__  /______  /______  /__|_ \__|
         \/       \/       \/     \/
-  WebApp° server Golo powered (c) @k33g_org
+  WebApp server Golo powered (c) @k33g_org
 """)
+
+  println("OS : " + OS)
+  #println("isWindows : " + isWindows() + " isMac : " + isMac() + " isLinux : " + isLinux())
 
   #println("=== M33ki ===")
   let sourceDir = args: get(0)
@@ -83,11 +97,30 @@ function main = |args| {
     FileUtils.copyDirectory(srcDir_m33ki_libs, tgtDir_application_libs)
     println("")
 
-    let applications = map[
-        ["1", ["Simple", "simple"]]
-      , ["2", ["REST routes skeleton", "rest"]]
-      , ["3", ["Hybrid (Golo + Java)", "hybrid"]]
-    ]
+    #let applications = map[
+    #    ["1", ["Simple", "simple"]]
+    #  , ["2", ["REST routes skeleton", "rest"]]
+    #  , ["3", ["Hybrid (Golo + Java)", "hybrid"]]
+    #]
+    #println(applications)
+
+    var applications = null
+
+    if fileExists(sourceDir+"/m33ki.json") {
+      println("reading configuration file")
+      let jsonConf = fileToText(sourceDir+"/m33ki.json", "UTF-8")
+
+      let mapper = ObjectMapper()
+      let jsonNode = mapper: readValue(jsonConf, JsonNode.class)
+
+      applications = mapper: treeToValue(jsonNode, java.util.LinkedHashMap.class)
+
+      #println(linkedHMap)
+
+
+    } else {
+      raise("Where is the m33ki.json?!")
+    }
 
     # TODO: configuration file
     #, ["4", ["Hybrid (Golo + Java) + REST Routes", "hybridrest"]]
@@ -103,6 +136,7 @@ function main = |args| {
     let kindOfApplication = readln("number?>")
 
     let choice = applications: get(kindOfApplication)
+
     if choice isnt null {
 
       println("Creating %s ...":format(choice: get(0)))
@@ -118,14 +152,19 @@ function main = |args| {
       println("- type : cd %s": format(appName))
       #println("- type (once) : chmod a+x go.sh")
       println("")
-      println("Now, to start the application just type : ./go.sh")
-      println("Have fun!")
 
-      # only *nix
-      let goFile = File(targetDir + "/" + appName + "/go.sh")
-      goFile: setExecutable(true)
-      goFile: setReadable(true)
-      goFile: setWritable(true)
+      if(isWindows() isnt true) {
+        println("Now, to start the application just type : ./go.sh")
+        # only *nix
+        let goFile = File(targetDir + "/" + appName + "/go.sh")
+        goFile: setExecutable(true)
+        goFile: setReadable(true)
+        goFile: setWritable(true)
+      } else {
+        println("Now, to start the application just type : go.bat")
+      }
+
+      println("Have fun!")
 
     } else {
       println("This is not in the list, bye :)")

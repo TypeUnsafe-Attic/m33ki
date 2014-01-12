@@ -26,7 +26,7 @@ function main = |args| {
 
   # Create a book
   POST("/books", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     let book = Book(): fromJsonString(request: body())
     book: create() # insert in collection
     response: status(201) # 201: created
@@ -35,13 +35,13 @@ function main = |args| {
 
   # Retrieve all books
   GET("/books", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     return books: fetch(): toJsonString()
   })
 
   # Retrieve a book by id
   GET("/books/:id", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
 
     let book = Book(): fetch(request: params(":id"))
 
@@ -54,14 +54,14 @@ function main = |args| {
   })
 
   PUT("/books/:id", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
     let book = Book(): fromJsonString(request: body())  
     book: update()
     return book: toJsonString()
   }) 
 
   DELETE("/books/:id", |request, response| {
-    response:type("application/json")
+    response: type("application/json")
 
     let book = Book(): delete(request: params(":id"))
 
