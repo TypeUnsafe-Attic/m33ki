@@ -14,5 +14,5 @@ function getMailConfig = ->
   DynamicObject()
     : hostName("smtp.googlemail.com")
     : smtpPort(465)
-    : user("me@gmail.com")
-    : password("xxx")
+    : user("bob@gmail.com")
+    : password("********")

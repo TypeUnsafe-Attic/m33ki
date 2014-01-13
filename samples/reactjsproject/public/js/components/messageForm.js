@@ -9,7 +9,7 @@ define(["react"], function (React) {
         <form className="messageForm" onSubmit={this.handleSubmit}>
           {this.props.label}
           <input type="text" placeholder="title" ref="title"/><br></br>
-          <textarea rows="10" cols="50" ref="message">Write something here</textarea><br></br>
+          <textarea rows="3" cols="40" placeholder="Write something here" ref="message"></textarea><br></br>
           <input type="submit" value="Post message" />
           <b>{this.state.message}</b>
         </form>

@@ -86,15 +86,34 @@ function MongoCollection = |mongoModel|{
   # get all models
   mongoColl: fetch(|this| { # TODO: callback ?
     let cursor = this: model(): collection(): find()
+    let memoryCollection = Collection()
     cursor: each(|doc| {
       let model = this: model(): copy()
       model: fields(doc: get("fields"))
       model: fields(): put("id", doc: getObjectId("_id"): toString())
-      this: addItem(model)
+      memoryCollection: addItem(model)
     })
     cursor: close()
-    return this
+    return memoryCollection
   })
+
+  # sortOrder : 1 or -1
+  mongoColl: lastN(|this, n, sortOrder| {
+    let cursor = this: model(): collection(): find(): sort(BasicDBObject("_id", sortOrder)): limit(n)
+    #db.foo.find().sort({_id:1}).limit(50);
+    let memoryCollection = Collection()
+    cursor: each(|doc| {
+      let model = this: model(): copy()
+      model: fields(doc: get("fields"))
+      model: fields(): put("id", doc: getObjectId("_id"): toString())
+      memoryCollection: addItem(model)
+      #println(model: toJsonString())
+    })
+    cursor: close()
+    return memoryCollection
+  })
+
+
   #coll: find("firstName", "John") (! return memory collection)
   mongoColl: find(|this, fieldName, value| {
     let memoryCollection = Collection()

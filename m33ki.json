@@ -1,6 +1,6 @@
 {
     "1" : ["Simple project","simple"]
   , "2" : ["REST project", "rest"]
-  , "3" : ["Hybrid project (Java + Golo) - only osx and linux", "hybrid"]
-  , "4" : ["Hybrid REST project (Java + Golo) - only osx and linux", "hybridrest"]
+  , "3" : ["Hybrid project (Java + Golo)", "hybrid"]
+  , "4" : ["Hybrid REST project (Java + Golo)", "hybridrest"]
 }

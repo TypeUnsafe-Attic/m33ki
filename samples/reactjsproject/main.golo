@@ -12,14 +12,20 @@ import controllers.appusersctrl   # AppUsersCtrl()
 import models.message             # Model : Message(), Collection : Messages()
 import controllers.messagesctrl   # MessagesCtrl()
 
+
 #TODO: 404 page (!!! it's a SPA)
 
 function main = |args| {
 
-  initialize(): static(getPublic()): port(getPort()): error(true): listenForChange("") # listen to root of the webapp  for "hot reloading"
+  initialize(): static(getPublic()): port(getPort()): error(true): listenForChange("app") # listen to root of the webapp  for "hot reloading"
+
+  # === create collection linked to mongoDb ===
+  let appUsersColl = AppUsers()
+  let messagesColl = Messages()
 
   # create a default administrator if 0 administrator
-  AppUsersCtrl(): findOrCreateAdmin()
+  AppUsersCtrl(appUsersColl): findOrCreateAdmin()
+  AppUsersCtrl(appUsersColl): findOrCreateUsers()
 
   AUTHENTICATION(
       AppUsers()
@@ -50,20 +56,28 @@ function main = |args| {
   })
 
   POST("/signup", |request, response| { # will be a post
-    return AppUsersCtrl(): signUp(request, response)
+    return AppUsersCtrl(appUsersColl): signUp(request, response)
   })
 
   GET("/confirm/:who", |request, response| {
-    return AppUsersCtrl(): createNewUser(request, response)
+    return AppUsersCtrl(appUsersColl): createNewUser(request, response)
   })
 
   POST("/messages", |request, response| {
-    return MessagesCtrl(): createMessage(request, response)
+    return MessagesCtrl(messagesColl): createMessage(request, response)
   })
 
   # get all users list (for all)
   GET("/appusers", |request, response| {
-    return AppUsersCtrl(): getAllUsers(request, response)
+    return AppUsersCtrl(appUsersColl): getAllUsers(request, response)
+  })
+
+  GET("/10last_messages", |request, response| {
+    return MessagesCtrl(messagesColl): getLastTenMessages(request, response)
+  })
+
+  GET("/last_message", |request, response| {
+    return MessagesCtrl(messagesColl): getLastMessage(request, response)
   })
 
 }

@@ -9,6 +9,8 @@ import org.apache.commons.jci.monitor.FilesystemAlterationMonitor
 import org.apache.commons.jci.readers.FileResourceReader
 import org.apache.commons.jci.stores.FileResourceStore
 
+#import org.apache.commons.io.FileUtils
+
 import java.io.File
 import java.net.URLClassLoader
 
@@ -148,16 +150,40 @@ function javaCompile = |path| {
   #java.lang.reflect.Array.set(classes, 0, "models/Human.java")
   #java.lang.reflect.Array.set(classes, 1, "controllers/Humans.java")
 
+  let OS = java.lang.System.getProperty("os.name"): toLowerCase()
+  let isWindows = -> OS: indexOf("win") >= 0
+  let isMac = -> OS: indexOf("mac") >= 0
+  let isLinux = -> (OS: indexOf("nix") >= 0) or (OS: indexOf("nux") >= 0)
+
+
   let javaFiles = filesDiscover(path, "java", list[], path)
   #println(javaFiles)
 
   let numberOfJavaFiles = javaFiles: size()
+
   let classes = java.lang.reflect.Array.newInstance(java.lang.String.class, numberOfJavaFiles)
+
   let index = DynamicObject(): value(0): define("increment",|this|-> this: value(this: value() + 1))
+
   javaFiles: each(|filePathName| {
-    java.lang.reflect.Array.set(classes, index: value(), filePathName: toString())
+    
+    if isWindows() is true {
+      var newFilePathName = filePathName: toString(): replaceAll("\\\\", "/")
+      #println(">>===> " + newFilePathName)
+      java.lang.reflect.Array.set(
+          classes
+        , index: value()
+        , newFilePathName
+      )
+    } else { # OSX or Linux
+      java.lang.reflect.Array.set(classes, index: value(), filePathName: toString())
+    }
+    
     index: increment()
   })
+
+  #java.lang.reflect.Array.set(classes, 0, "/controllers/Application.java")
+  #java.lang.reflect.Array.set(classes, 1, "/models/Human.java")
 
   let compiler = JCompiler(
       path  # source path
