@@ -13,16 +13,21 @@ define(["react"], function (React) {
         color: 'red'
       };
 
+      var classButton = "uk-button";
+      var classForm = "uk-form"
+
       return (
-        <form className="userForm" onSubmit={this.handleSubmit}>
-          {this.props.message}
-          <input type="text" placeholder="Pseudo" ref="pseudo"/>
-          <input type="password" placeholder="password" ref="password"/>
-          <input type="submit" value="Login" />
-          <button onClick={this.handleClick} ref="btnLogOut">Logout</button>
-          <legend style={successStyle} ref="successLoginMessage"></legend>
-          <legend style={errorStyle} ref="errorLoginMessage"></legend>
-          <b>{this.state.message()}</b>
+        <form className={classForm} onSubmit={this.handleSubmit}>
+          <fieldset>
+            <legend>{this.props.message}</legend>
+            <input type="text" placeholder="Pseudo" ref="pseudo"/>
+            <input type="password" placeholder="password" ref="password"/>
+            <input className={classButton} type="submit" value="Login" />
+            <button className={classButton} onClick={this.handleClick} ref="btnLogOut">Logout</button>
+            <p style={successStyle} ref="successLoginMessage"></p>
+            <p style={errorStyle} ref="errorLoginMessage"></p>
+            <p> {this.state.message()}</p>
+          </fieldset>
         </form>
         );
     },

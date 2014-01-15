@@ -14,6 +14,19 @@ import org.apache.commons.jci.stores.FileResourceStore
 import java.io.File
 import java.net.URLClassLoader
 
+import java.io.BufferedOutputStream
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
+
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
+import org.apache.commons.compress.archivers.zip.ZipFile
+import org.apache.commons.compress.utils.IOUtils
+
+
+
 #TODO: rename(?)
 #TODO: listenForJavaChange, GoloChange, etc. ...
 function listenForChange = |path| {
@@ -198,7 +211,7 @@ function javaCompile = |path| {
 
 }
 
-function listenForChangeThenCompile = |path, javaSourcePath| {
+function listenForChangeThenCompile = |path, javaSourcePath, packageBaseName, jarPath, jarName| {
   let conf = map[
     ["extends", "org.apache.commons.jci.listeners.FileChangeListener"],
     ["implements", map[
@@ -218,6 +231,9 @@ function listenForChangeThenCompile = |path, javaSourcePath| {
         println("Java classes compiling ...")
         javaCompile(javaSourcePath)
 
+        println("Jar creating ...")
+        createZip(java.io.File(javaSourcePath): getAbsolutePath() +"/"+packageBaseName, java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar")
+
         println("Application is restarting ...")
         #java.lang.Runtime.getRuntime(): halt(1)
         java.lang.System.exit(1)
@@ -235,6 +251,92 @@ function listenForChangeThenCompile = |path, javaSourcePath| {
 
 }
 
+function compileIfNotJar = |javaSourcePath, packageBaseName, jarPath, jarName| {
+
+  if File(java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar"): exists() isnt true {
+    println("First time ...")
+    println("Java classes compiling ...")
+    javaCompile(javaSourcePath)
+    println("Jar creating ...")
+    createZip(java.io.File(javaSourcePath): getAbsolutePath() +"/"+packageBaseName, java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar")
+    println("Application is restarting ...")
+    java.lang.System.exit(1)
+  }
+
+}
+
+function addFileToZip = |zOut, path, base| {
+  # ZipArchiveOutputStream
+  # String
+  # String
+
+  let f = File(path)                            # File
+  let entryName = base + f: getName()           # String
+  let zipEntry = ZipArchiveEntry(f, entryName)  # ZipArchiveEntry
+
+  zOut: putArchiveEntry(zipEntry)
+
+  if f: isFile() is true {
+    var fInputStream = null     # FileInputStream
+    try {
+      fInputStream = FileInputStream(f)
+      IOUtils.copy(fInputStream, zOut)
+      zOut: closeArchiveEntry()
+      fInputStream: close()
+    } catch (e) {
+      e: printStackTrace()
+    } finally {
+      #if fInputStream isnt null {
+      #  IOUtils.closeQuietly(fInputStream)
+      #}
+    }
+
+  } else {
+    zOut: closeArchiveEntry()
+    let children = f: listFiles()   # File[] 
+
+    if (children != null) is true {
+        foreach child in children {
+            addFileToZip(zOut, child: getAbsolutePath(), entryName + "/")
+        }
+    }
+  } # end else
+
+}
+
+function createZip = |directoryPath, zipPath| {
+  # String
+  # String
+  var fOut = null     # FileOutputStream
+  var bOut = null     # BufferedOutputStream
+  var tOut = null     # ZipArchiveOutputStream
+
+  try {
+    fOut = FileOutputStream(File(zipPath))
+    bOut = BufferedOutputStream(fOut)
+    tOut = ZipArchiveOutputStream(bOut)
+    addFileToZip(tOut, directoryPath, "")
+  } catch (e) {
+    e: printStackTrace()
+  } finally {
+    tOut: finish()
+    tOut: close()
+    bOut: close()
+    fOut: close()
+  }
+
+}
+
+
+----
+  # classLoader
+  let csl = getClassLoader("samples/hybrid/app")
+
+  # classes
+  let human = csl: loadClass("models.Human"): getConstructor(String.class, String.class)
+
+  let humansController = csl: loadClass("controllers.Humans")
+----
 function getClassLoader = |targetPath| {
   let targetDir = File(targetPath)
   #println("targetPath : " + targetPath)

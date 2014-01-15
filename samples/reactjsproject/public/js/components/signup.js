@@ -9,20 +9,25 @@ define(["react"], function (React) {
 
     render: function() {
 
+      var classButton = "uk-button";
+      var classForm = "uk-form"
+
       return (
-        <form className="signupForm" onSubmit={this.handleSubmit}>
-          {this.props.message}
-          <input type="text" placeholder="Email" ref="email"/>
-          <input type="text" placeholder="Pseudo" ref="pseudo"/>
-          <input type="password" placeholder="password" ref="password"/>
-          <input type="submit" value="SignUp" />
-          <b>{this.state.message}</b>
+        <form className={classForm} onSubmit={this.handleSubmit}>
+          <fieldset>
+            <legend>{this.props.message}</legend>
+            <input type="text" placeholder="Email" ref="email"/>
+            <input type="text" placeholder="Pseudo" ref="pseudo"/>
+            <input type="password" placeholder="password" ref="password"/>
+            <input className={classButton} type="submit" value="SignUp" />
+            <p>{this.state.message}</p>
+          </fieldset>
         </form>
         );
     },
     getInitialState: function() {
       return {
-        message : "..."
+        message : ""
       };
     },
     componentDidMount: function() { /* initialize when component rendered */

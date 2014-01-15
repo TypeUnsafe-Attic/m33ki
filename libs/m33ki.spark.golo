@@ -42,8 +42,8 @@ function initialize = {
         listenForChange(path) # from m33ki.hot | hot reloading of golo scripts
         return this
       })
-    : define("listenForChangeThenCompile", |this, path, javaSourcePath| {
-        listenForChangeThenCompile(path, javaSourcePath) # from m33ki.hot | hot reloading of golo scripts and java file + compilation
+    : define("listenForChangeThenCompile", |this, path, javaSourcePath, packageBaseName, jarPath, jarName| {
+        listenForChangeThenCompile(path, javaSourcePath, packageBaseName, jarPath, jarName) # from m33ki.hot | hot reloading of golo scripts and java file + compilation
         return this
       })
 

@@ -5,19 +5,42 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <link href="css/simple.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="uikit-2.0.0/css/uikit.min.css" />
+  <!--<link href="css/simple.css" rel="stylesheet" type="text/css">-->
+  <style>
+    body {
+      margin: 0;
+      padding: 10px;
+    }
+  </style>
 </head>
 <body>
   <welcome-title></welcome-title>
-  <login></login><hr>
-  <signup></signup><hr>
-  <appusers-list></appusers-list>
-  <hr>
-  <h3>Messages</h3>
-  <message-form></message-form>
-  <hr>
-  <messages-list></messages-list>
 
+  <div class="uk-grid">
+    <div class="uk-width-1-2">
+      <login></login>
+    </div>
+    <div class="uk-width-1-2">
+      <signup></signup>
+    </div>
+  </div>
+
+  <h3>Your message</h3>
+  <message-form></message-form>
+
+  <hr class="uk-article-divider">
+
+  <div class="uk-grid">
+    <div class="uk-width-1-2">
+      <h3>Messages</h3>
+      <messages-list></messages-list>
+    </div>
+    <div class="uk-width-1-2">
+      <h3>Users</h3>
+      <appusers-list></appusers-list>
+    </div>
+  </div>
 
 
   <script data-main="js/main" src="js/vendors/require.min.js"></script>

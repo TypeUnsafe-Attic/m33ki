@@ -10,7 +10,8 @@ requirejs.config({
     "showdown"      : "vendors/showdown",
     "jsx"           : "vendors/jsx",
     "JSXTransformer": "vendors/JSXTransformer",
-    "react"         : "vendors/react.min"
+    "react"         : "vendors/react.min",
+    "uikit"         : "../uikit-2.0.0/js/uikit.min"
   },
   shim: {
     "showdown": {
