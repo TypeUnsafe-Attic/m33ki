@@ -28,7 +28,7 @@ function main = |args| {
   AppUsersCtrl(appUsersColl): findOrCreateUsers()
 
   AUTHENTICATION(
-      AppUsers()
+      appUsersColl
     , getSecurityKey()
     , |user, authenticated| { # on LogIn
         println(user: getField("pseudo") + " is authenticated : " + authenticated)
@@ -45,7 +45,7 @@ function main = |args| {
       }
   )
 
-  ADMIN(AppUsers(), getSecurityKey())
+  ADMIN(appUsersColl, getSecurityKey())
 
 
   # my first little json service

@@ -141,6 +141,13 @@
             <classifier>lite</classifier>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jongo</groupId>
+            <artifactId>jongo</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
     
 </project>

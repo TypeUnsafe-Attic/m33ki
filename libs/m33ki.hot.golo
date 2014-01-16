@@ -19,16 +19,12 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 
-
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
 import org.apache.commons.compress.archivers.zip.ZipFile
 import org.apache.commons.compress.utils.IOUtils
 
 
-
-#TODO: rename(?)
-#TODO: listenForJavaChange, GoloChange, etc. ...
 function listenForChange = |path| {
   println("Listening on " + java.io.File("."): getCanonicalPath() + "/" + path)
   let conf = map[
@@ -36,15 +32,19 @@ function listenForChange = |path| {
     ["implements", map[
       ["onDirectoryChange", |this, pDir| {
         println("Content in " + pDir: getName() + " has changed ....")
-        println("Application is restarting ...")
+        #println("Application is restarting ...")
         #java.lang.Runtime.getRuntime(): halt(1)
-        java.lang.System.exit(1)
+        #java.lang.System.exit(1)
       }],
       ["onFileChange", |this, pFile| {
-        println("File " + pFile: getName() + " has changed ....")
-        println("Application is restarting ...")
-        #java.lang.Runtime.getRuntime(): halt(1)
-        java.lang.System.exit(1)
+
+        if pFile: getName(): endsWith(".golo") {
+          println("File " + pFile: getName() + " has changed ....")
+          println("Application is restarting ...")
+          #java.lang.Runtime.getRuntime(): halt(1)
+          java.lang.System.exit(1)
+        }
+
       }]
     ]]
   ]
@@ -127,7 +127,6 @@ function JCompiler = |sourcePath, targetPath, classes| {
 ----
 function filesDiscover = |path, extension, listOfFiles, root| {
   #println("path : " + path + " root : " + root)
-
   let start_root = java.io.File(path)
   let files = start_root: listFiles(): asList()
 
@@ -136,17 +135,9 @@ function filesDiscover = |path, extension, listOfFiles, root| {
       #println("this is a directory : " + file: getAbsolutePath())
       filesDiscover(file: getAbsolutePath(), extension, listOfFiles, root)
     } else {
-      #println("this is a file : " + file: getAbsoluteFile(): getName())
-      #println("java file ? : " + file: getAbsoluteFile(): getName(): endsWith("." + extension))
-      #println("split : " + file: getAbsolutePath(): toString(): split(root): toString())
-      #println("split 0 : " + file: getAbsolutePath(): toString(): split(root): get(0))
-      #println("split 1 : " + file: getAbsolutePath(): toString(): split(root): get(1))
       if file: getAbsoluteFile(): getName(): endsWith("." + extension) is true {
-
         var javaFileName = file: getAbsolutePath(): toString(): split(root): get(1)
-
         #TODO : other method because pb if app in the application name
-
         println("--> " + javaFileName)
         listOfFiles: add(javaFileName)
       }
@@ -159,15 +150,10 @@ function filesDiscover = |path, extension, listOfFiles, root| {
 
 function javaCompile = |path| {
 
-  #let classes = java.lang.reflect.Array.newInstance(java.lang.String.class, 2)
-  #java.lang.reflect.Array.set(classes, 0, "models/Human.java")
-  #java.lang.reflect.Array.set(classes, 1, "controllers/Humans.java")
-
   let OS = java.lang.System.getProperty("os.name"): toLowerCase()
   let isWindows = -> OS: indexOf("win") >= 0
   let isMac = -> OS: indexOf("mac") >= 0
   let isLinux = -> (OS: indexOf("nix") >= 0) or (OS: indexOf("nux") >= 0)
-
 
   let javaFiles = filesDiscover(path, "java", list[], path)
   #println(javaFiles)
@@ -195,9 +181,6 @@ function javaCompile = |path| {
     index: increment()
   })
 
-  #java.lang.reflect.Array.set(classes, 0, "/controllers/Application.java")
-  #java.lang.reflect.Array.set(classes, 1, "/models/Human.java")
-
   let compiler = JCompiler(
       path  # source path
     , path  # target path
@@ -221,22 +204,30 @@ function listenForChangeThenCompile = |path, javaSourcePath, packageBaseName, ja
         #println("Java classes compiling ...")
         #javaCompile(javaSourcePath)
 
-        println("Application is restarting ...")
-        #java.lang.Runtime.getRuntime(): halt(1)
-        java.lang.System.exit(1)
+        #println("Jar creating ...")
+        #createZip(java.io.File(javaSourcePath): getAbsolutePath() +"/"+packageBaseName, java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar")
+
+        #println("Application is restarting ...")
+        #java.lang.System.exit(1)
       }],
       ["onFileChange", |this, pFile| {
-        println("File " + pFile: getName() + " has changed ....")
 
-        println("Java classes compiling ...")
-        javaCompile(javaSourcePath)
+        if pFile: getName(): endsWith(".java") or pFile: getName(): endsWith(".golo") {
+          println("File " + pFile: getName() + " has changed ....")
 
-        println("Jar creating ...")
-        createZip(java.io.File(javaSourcePath): getAbsolutePath() +"/"+packageBaseName, java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar")
+          if pFile: getName(): endsWith(".java") {
+            println("Java classes compiling ...")
+            javaCompile(javaSourcePath)
 
-        println("Application is restarting ...")
-        #java.lang.Runtime.getRuntime(): halt(1)
-        java.lang.System.exit(1)
+            println("Jar creating ...")
+            createZip(java.io.File(javaSourcePath): getAbsolutePath() +"/"+packageBaseName, java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar")
+          }
+
+          println("Application is restarting ...")
+          #java.lang.Runtime.getRuntime(): halt(1)
+          java.lang.System.exit(1)
+        }
+
       }]
     ]]
   ]
@@ -249,6 +240,32 @@ function listenForChangeThenCompile = |path, javaSourcePath, packageBaseName, ja
   fam: addListener(java.io.File( java.io.File("."): getCanonicalPath() + "/" + path), listener)
   fam: start()
 
+}
+
+function compileAndCreateJar = |javaSourcePath, packageBaseName, jarPath, jarName| {
+    println("Compiling and creating jar application")
+    println("Java classes compiling ...")
+    javaCompile(javaSourcePath)
+    println("Jar creating ...")
+    createZip(java.io.File(javaSourcePath): getAbsolutePath() +"/"+packageBaseName, java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar")
+    println("Application is restarting ...")
+    java.lang.System.exit(1)
+}
+
+function doesThisJarExist = |jarPath, jarName| -> File(java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar"): exists()
+
+# deprecated
+function atLeastOneFileYoungerThanJar = |javaSourcePath, jarPath, jarName| {
+  let javaFiles = filesDiscover(javaSourcePath, "java", list[], javaSourcePath)
+  let runCompilation = DynamicObject():value(false)
+
+  javaFiles: each(|filePathName| {
+    var javaFile = File(filePathName)
+    if javaFile: lastModified() < File(java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar"): lastModified() {
+      runCompilation: value(true)
+    }
+  })
+  return runCompilation: value()
 }
 
 function compileIfNotJar = |javaSourcePath, packageBaseName, jarPath, jarName| {
