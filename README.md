@@ -91,16 +91,16 @@ M33ki was built for needs of modern web & mobile apps.
 - Websockets, EventSource (Server Sent Events)
 - NoSQL (MongoDb & Redis)
 
-###Example
+###REST Example
 
 ```coffeescript
-  # Create a model
-  POST("/models", |request, response| {
-    response: type("application/json")
-    println(request: body())
-    response: status(201) # 201: created
-    return Json(): toJsonString(map[["message", "this is a POST request"]])
-  })
+# Create a model
+POST("/models", |request, response| {
+  response: type("application/json")
+  println(request: body())
+  response: status(201) # 201: created
+  return Json(): toJsonString(map[["message", "this is a POST request"]])
+})
 
 # Retrieve all models
 GET("/models", |request, response| {
@@ -135,31 +135,74 @@ DELETE("/models/:id", |request, response| {
 
 ###Dependencies
 
+You have to install Golo and set GOLO_HOME to PATH
+
 ###Linux
 
+    # 1- clone m33ki repository in a directory
+    git clone https://github.com/TypeUnsafe/m33ki.git
+
+    # 2- edit .bashrc
+    pico ~/.bashrc
+
+    # 3- Then :
+    export GOLO_HOME="$HOME/golo-directory/"
+    export PATH=$PATH:$GOLO_HOME/bin
+
+    export PATH=$PATH:$HOME/directory/m33ki
 
 ###OSX
 
+    # 1- clone m33ki repository in a directory
+    git clone https://github.com/TypeUnsafe/m33ki.git
+
+    # 2- edit .bash_profile
+    sudo pico ~/.bash_profile
+
+    # 3- Then :
+    GOLO_HOME=/golo-directory/
+    export GOLO_HOME
+    export PATH=$PATH:$GOLO_HOME/bin
+
+    M33KI_HOME=/directory/m33ki
+    export M33KI_HOME
+    export PATH=$PATH:$M33KI_HOME
 
 ###Windows
 
+  Set System Variables in Configuration Panel.
+
+##Create an application
+
+- run console : type `m33ki`
+- answer the questions (application name, kind of application)
+- that's all
+- `cd <name of the application>`
+- run your application : type `./go.sh` (OSX & Linux) or `go.bat` (Windows)
 
 ##Extend your application
 
+Each M33ki application has a `/jars` directory. You just need to copy the jar file you need in this directory, and then you can use it with Golo and/or Java?
 
 ##Extend M33ki
+
+    W.I.P.
 
 ###Jars
 
 ###Templates
 
+You can create project template in `/templates` directory of M33ki distribution. Do not forget to change the `m33ki.json` file to declare your new project :
+
+    {
+        "1" : ["Simple project","simple"]
+      , "2" : ["REST project", "rest"]
+      , "3" : ["Hybrid project (Java + Golo)", "hybrid"]
+    }
 
 ##W.I.P.
 
 - Documentation
 - Front framework
 - Generators
-
-
-
-
+- ...
