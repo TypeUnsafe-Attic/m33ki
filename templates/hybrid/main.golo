@@ -14,6 +14,10 @@ function main = |args| {
   initialize(): static("/public"): port(8888): error(true)
   listen(true) # listen to change, then compile java file
 
+  GET("/jane", |request, response| {
+    return Application(): getJane(request, response)
+  })
+
   GET("/bob", |request, response| {
     response: type("application/json")
     let bob = Human("Bob", "Morane")
