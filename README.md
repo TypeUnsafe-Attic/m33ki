@@ -4,6 +4,8 @@
 
 ![...](meekilogo.png)
 
+>>>Any Resemblance to Existing Framework is Purely Coincidental
+
 *M33ki Framework makes it easy to build web applications with Golo & Java.*
 
 M33ki is based on a lightweight, stateless or stateful (as you want) , web-friendly architecture.
