@@ -34,7 +34,7 @@ let future = Future(executor, |message, self| {
     })
     println(self: result())
   })
-```coffeescript
+```
 
 ###Promises
 
