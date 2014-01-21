@@ -1,10 +1,10 @@
 #M33ki
 
->>The !(not)Opinionated Web Framework *(by TypeUnSafe inc.)*
+>The !(not)Opinionated Web Framework *(by TypeUnSafe inc.)*
 
 ![...](meekilogo.png)
 
->>>Any Resemblance to Existing Framework is Purely Coincidental
+>Any Resemblance to Existing Framework is Purely Coincidental
 
 *M33ki Framework makes it easy to build web applications with Golo & Java.*
 
