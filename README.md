@@ -38,9 +38,49 @@ let future = Future(executor, |message, self| {
 
 ###Promises
 
+```coffeescript
+var result = DynamicObject(): value(0)
+
+Promise(executor)
+  : task(|arg| {
+    println("promise argument is " + arg)
+    let res = DynamicObject(): value(1)
+
+    arg: times(|index| {
+      res: value(res: value() * (index + 1))
+      java.lang.Thread.sleep(500_L)
+    })
+
+    return res: value()
+  })
+  : success(|value| { # if success
+      println("success : " + value)
+      result: value(value)
+  })
+  : error(|error| { # on error
+      println("error : " + error)
+  })
+  : always(|self| { # but always
+      println("always : " + self: result())
+  })
+  : make(5) # arg
+```
+
 ###Observers
 
+```coffeescript
+let dyno = DynamicObject(): info(""): total(0)
 
+let observer = Observer(executor)
+  : observable(dyno): delay(3000_L)
+  : onChange(|currentValue, oldValue, thatObserver| {
+
+      println("old : " + oldValue: info() + " " + oldValue: total())
+      println("current : " + currentValue: info() + " " + currentValue: total())
+
+    })
+  : observe(["info", "total"])
+```
 
 ##Modern web & mobile.
 
@@ -50,6 +90,46 @@ M33ki was built for needs of modern web & mobile apps.
 - JSON is a first class citizen
 - Websockets, EventSource (Server Sent Events)
 - NoSQL (MongoDb & Redis)
+
+###Example
+
+```coffeescript
+  # Create a model
+  POST("/models", |request, response| {
+    response: type("application/json")
+    println(request: body())
+    response: status(201) # 201: created
+    return Json(): toJsonString(map[["message", "this is a POST request"]])
+  })
+
+# Retrieve all models
+GET("/models", |request, response| {
+  response: type("application/json")
+  return Json(): toJsonString(map[["message", "this is a GET request"]])
+})
+
+# Retrieve a model by id
+GET("/models/:id", |request, response| {
+  response: type("application/json")
+  let id = request: params(":id")
+  return Json(): toJsonString(map[["message", "this is a GET request with id="+id]])
+})
+
+# Update model
+PUT("/models/:id", |request, response| {
+  response: type("application/json")
+  println(request: body())
+  let id = request: params(":id")
+  return Json(): toJsonString(map[["message", "this is a PUT request with id="+id]])
+})
+
+# Delete model
+DELETE("/models/:id", |request, response| {
+  response: type("application/json")
+  let id = request: params(":id")
+  return Json(): toJsonString(map[["message", "this is a DELETE request with id="+id]])
+})
+```
 
 ##Install M33ki
 
