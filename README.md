@@ -186,9 +186,9 @@ Each M33ki application has a `/jars` directory. You just need to copy the jar fi
 
 ##Extend M33ki
 
-    W.I.P.
-
 ###Jars
+
+    W.I.P.
 
 ###Templates
 
