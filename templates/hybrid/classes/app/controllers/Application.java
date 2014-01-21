@@ -10,16 +10,16 @@ import java.lang.System;
 
 public class Application {
 
-  public Human giveMeSomebody() {
-    System.out.println("get a human from controller");
-    return new Human("JOHN", "DOE");
-  }
-
   public String getJane(Request request, Response response) {
     response.type("application/json");
     response.status(200);
     Human jane = new Human("Jane", "Doe");
     return Json.stringify(jane);
+  }
+
+  public Human giveMeSomebody() {
+    System.out.println("get a human from controller");
+    return new Human("JOHN", "DOE");
   }
 
   public String about() {

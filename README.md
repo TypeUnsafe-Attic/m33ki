@@ -16,14 +16,25 @@ Make your changes and simply hit refresh! All you need is a browser and a text e
 
 ![...](appgolo.gif)
 
-
 ###Getting started with Java
 
-
+![...](appjava.gif)
 
 ##Asynchronous model ... if you want
 
 ###Futures
+
+```coffeescript
+let future = Future(executor, |message, self| {
+    self: result(0)
+    println("You've got a message : " + message)
+    42: times({
+      self: result(self: result() + 1)
+      java.lang.Thread.sleep(1000_L)
+    })
+    println(self: result())
+  })
+```coffeescript
 
 ###Promises
 
