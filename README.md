@@ -24,6 +24,12 @@ Make your changes and simply hit refresh! All you need is a browser and a text e
 
 ![...](appjava.gif)
 
+###Hi!M33ki! An "obliging" web's scaffolding tool
+
+![...](him33ki.gif)
+
+>You can add your own generators. See `generators` directory
+
 ##Asynchronous model ... if you want
 
 ###Futures

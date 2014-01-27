@@ -1,0 +1,7 @@
+#!/bin/sh
+# === hiM33kI (Generator) ===
+
+BASEDIR=$(dirname $0)
+echo $BASEDIR
+CWD=$(pwd)
+java -jar $BASEDIR/him33ki.jar $BASEDIR $CWD

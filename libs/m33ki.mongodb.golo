@@ -13,6 +13,36 @@ import org.bson.types.ObjectId
 
 import m33ki.collections
 
+----
+####Set MongoDb parameters
+
+When you define models :
+
+    function Human = -> DynamicObject()
+      : mixin(Model())
+      : mixin(
+          MongoModel(
+            Mongo()
+              : database("golodb")
+              : collection("humans")
+          )
+      )
+
+You can do this :
+
+    function Human = -> DynamicObject()
+      : mixin(Model())
+      : mixin(
+          MongoModel(
+            Mongo()
+              : database("golodb")
+              : collection("humans")
+              : host("golo-inside")
+              : port(42)
+          )
+      )
+
+----
 function Mongo =  {
   let db = DynamicObject()  # default values
     :host("localhost")
@@ -42,8 +72,10 @@ function MongoModel = |mongoCollection|{
   })
 
   mongoModel: fetch(|this, id| { # get one model by id, callBack ?
-    println("ID----> " + id)
-    let doc = this: collection(): findOne(BasicDBObject("_id", ObjectId(id)))
+    #println("ID----> " + id)
+    #let doc = this: collection(): findOne(BasicDBObject("_id", ObjectId(id)))
+
+    let doc = this: collection(): find(BasicDBObject("_id", ObjectId(id))): next()
 
     if doc isnt null {
       this: fields(doc: get("fields"))
@@ -55,7 +87,9 @@ function MongoModel = |mongoCollection|{
   # TO BE TESTED / Some side effects
   mongoModel: update(|this| { # update one model , callBack ?
     let id = this: fields(): get("id"): toString()
-    let doc = this: collection(): findOne(BasicDBObject("_id", ObjectId(id)))
+    #let doc = this: collection(): findOne(BasicDBObject("_id", ObjectId(id)))
+    
+    let doc = this: collection(): find(BasicDBObject("_id", ObjectId(id))): next()
 
     try {
       let newDoc = BasicDBObject()
@@ -70,7 +104,10 @@ function MongoModel = |mongoCollection|{
   })
 
   mongoModel: delete(|this, id| { # delete one model by id, callBack ?
-    let doc = this: collection(): findOne(BasicDBObject("_id", ObjectId(id)))
+    #let doc = this: collection(): findOne(BasicDBObject("_id", ObjectId(id)))
+
+    let doc = this: collection(): find(BasicDBObject("_id", ObjectId(id))): next()
+    
     this: collection(): remove(doc)
     return this
   })
@@ -78,7 +115,7 @@ function MongoModel = |mongoCollection|{
   return mongoModel
 }
 
-#TODO: some query helpers (find first etc. ...)
+#TODO: some query helpers (find first etc. ... <> <= ...)
 
 function MongoCollection = |mongoModel|{
   let mongoColl = DynamicObject(): model(mongoModel): kind("mongodb")
