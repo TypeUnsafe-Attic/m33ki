@@ -44,6 +44,11 @@ function Json = ->
       let treeMap = this: fromJson(jsonNode, java.util.TreeMap.class)
       return treeMap
     })
+    :toHashMap(|this, something| {
+      let jsonNode = this: parse(something)
+      let hMap = this: fromJson(jsonNode, java.util.HashMap.class)
+      return hMap
+    })
     :message(|this, message| {
       return this: toJsonString(map[["message", message]])
     })

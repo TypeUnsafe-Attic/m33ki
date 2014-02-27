@@ -18,17 +18,67 @@ Make your changes and simply hit refresh! All you need is a browser and a text e
 
 ###Getting started with Golo
 
-![...](appgolo.gif)
+- open a terminal
+- type `m33ki`
+- type your application name, ie `myapp`
+- choose the kind of project : `1`
+- that's all, go to the application directory : `cd myapp` and run it `./go.sh`
+
+
+       _____  ________ ________  __   .__
+      /     \ \_____  \\_____  \|  | _|__|
+     /  \ /  \  _(__  <  _(__  <|  |/ /  |
+    /    Y    \/       \/       \    <|  |
+    \____|__  /______  /______  /__|_ \__|
+            \/       \/       \/     \/
+      WebApp server Golo powered (c) @k33g_org
+
+    OS : mac os x
+    Application name?>myapp
+    Creating myapp application
+    1- copy /Users/k33g_org/Dropbox/Public/TYPEUNSAFE/m33ki/jars to /Users/k33g_org/Dropbox/Public/myapp
+    2- copy /Users/k33g_org/Dropbox/Public/TYPEUNSAFE/m33ki/libs to /Users/k33g_org/Dropbox/Public/myapp
+
+    reading configuration file
+    What kind of application ?
+    1- Golo Skeleton project
+    2- Hybrid project (Java + Golo)
+    number?>1
+    Creating Golo Skeleton project ...
+
+    myapp application has been created
+    Last steps :
+    - type : cd myapp
+
+    Now, to start the application just type : ./go.sh
+    Have fun!
+
+More explanations to come : WIP
 
 ###Getting started with Java
 
-![...](appjava.gif)
+- open a terminal
+- type `m33ki`
+- type your application name, ie `myapp`
+- choose the kind of project : `2`
+- that's all, go to the application directory : `cd myapp` and run it `./go.sh`
 
-###Hi!M33ki! An "obliging" web's scaffolding tool
+###Hi! An "obliging" web's scaffolding tool
 
-![...](him33ki.gif)
+see : [https://github.com/k33g/hi](https://github.com/k33g/hi)
+
+Hi comes with a application generator for M33ki
 
 >You can add your own generators. See `generators` directory
+
+
+##Golo Application structure
+
+WIP
+
+##Hybrid (Java+Golo) Application structure
+
+WIP
 
 ##Asynchronous model ... if you want
 

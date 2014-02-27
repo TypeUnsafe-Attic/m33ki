@@ -1,8 +1,5 @@
 {
     "1" : ["Golo Skeleton project", "golo_skeleton"]
-  , "2" : ["Java Skeleton project (hybrid) [WIP]", "java_skeleton"]
-  , "3" : ["[Golo sample] Simple project", "simple"]
-  , "4" : ["[Golo sample] REST project", "rest"]
-  , "5" : ["[Golo sample] Hybrid project (Java + Golo)", "hybrid"]
+  , "2" : ["Hybrid project (Java + Golo)", "hybrid_skeleton"]
 
 }
