@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple</title>
+  <link href="css/simple.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+  <div class="content">
+    <h1>Hopes</h1>
+
+    <ul></ul>
+
+    <button>GO</button>
+  </div>
+
+<script src="js/vendors/jquery-2.0.3.min.js"></script>
+<script>
+  $(function() {
+    /* When ready */
+    var ul = $("ul");
+    var h1 = $("h1");
+
+    $("button").click(function() {
+
+      var source = new EventSource('/pi');
+      source.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if(data.message) ul.append("<li>"+data.message+"</li>")
+        if(data.value) h1.html(data.value)
+
+        //console.log(data)
+        if (data.message=="done") source.close();
+      };
+
+
+    });
+
+  });
+</script>
+</body>
+</html>
