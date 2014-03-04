@@ -106,15 +106,18 @@ function MongoModel = |mongoCollection|{
   return mongoModel
 }
 
-function MongoCollection = |mongoModel|{
-  let model = mongoModel
+function MongoCollection = |mongoModel, mongoCollection|{
   let mongoColl = DynamicObject()
 
-  mongoColl: model(mongoModel)
+  mongoColl: define("model", |this| {
+    return mongoModel(mongoCollection)
+  })
+
+  mongoColl: collection(mongoCollection)
 
   # get all models
   mongoColl: fetchAllReadable(|this| {
-    let cursor = this: model(): collection(): find()
+    let cursor = this: collection(): find()
     let models = list[]
     cursor: each(|doc| {
       let map = doc: toMap()
@@ -130,7 +133,7 @@ function MongoCollection = |mongoModel|{
   #coll: find("firstName", "John") (! return memory collection)
   mongoColl: findReadable(|this, fieldName, value| {
 
-    let cursor = this: model(): collection()
+    let cursor = this: collection()
       : find(BasicDBObject(fieldName, value))
     let models = list[]
 
@@ -143,7 +146,6 @@ function MongoCollection = |mongoModel|{
     cursor: close()
     return models
   })
-
 
   return mongoColl
 }
