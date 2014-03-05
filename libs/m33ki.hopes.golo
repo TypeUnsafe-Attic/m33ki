@@ -15,6 +15,8 @@ augment java.util.concurrent.Semaphore {
   }
 }
 
+function getSemaphore = |arg| -> java.util.concurrent.Semaphore(arg)
+
 # Properties
 struct hopeStructure = {
     promise

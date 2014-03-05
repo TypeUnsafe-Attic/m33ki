@@ -82,65 +82,13 @@ WIP
 
 ##Asynchronous model ... if you want
 
-###Futures
+###Promises (hopes)
 
-```coffeescript
-let future = Future(executor, |message, self| {
-    self: result(0)
-    println("You've got a message : " + message)
-    42: times({
-      self: result(self: result() + 1)
-      java.lang.Thread.sleep(1000_L)
-    })
-    println(self: result())
-  })
-```
+WIP
 
-###Promises
+###Actors
 
-```coffeescript
-var result = DynamicObject(): value(0)
-
-Promise(executor)
-  : task(|arg| {
-    println("promise argument is " + arg)
-    let res = DynamicObject(): value(1)
-
-    arg: times(|index| {
-      res: value(res: value() * (index + 1))
-      java.lang.Thread.sleep(500_L)
-    })
-
-    return res: value()
-  })
-  : success(|value| { # if success
-      println("success : " + value)
-      result: value(value)
-  })
-  : error(|error| { # on error
-      println("error : " + error)
-  })
-  : always(|self| { # but always
-      println("always : " + self: result())
-  })
-  : make(5) # arg
-```
-
-###Observers
-
-```coffeescript
-let dyno = DynamicObject(): info(""): total(0)
-
-let observer = Observer(executor)
-  : observable(dyno): delay(3000_L)
-  : onChange(|currentValue, oldValue, thatObserver| {
-
-      println("old : " + oldValue: info() + " " + oldValue: total())
-      println("current : " + currentValue: info() + " " + currentValue: total())
-
-    })
-  : observe(["info", "total"])
-```
+WIP
 
 ##Modern web & mobile.
 
