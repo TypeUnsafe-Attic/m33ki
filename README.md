@@ -24,7 +24,7 @@ Make your changes and simply hit refresh! All you need is a browser and a text e
 - choose the kind of project : `1`
 - that's all, go to the application directory : `cd myapp` and run it `./go.sh`
 
-
+Terminal :
 
        _____  ________ ________  __   .__
       /     \ \_____  \\_____  \|  | _|__|
