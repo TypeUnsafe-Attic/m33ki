@@ -25,6 +25,7 @@ Make your changes and simply hit refresh! All you need is a browser and a text e
 - that's all, go to the application directory : `cd myapp` and run it `./go.sh`
 
 
+
        _____  ________ ________  __   .__
       /     \ \_____  \\_____  \|  | _|__|
      /  \ /  \  _(__  <  _(__  <|  |/ /  |
