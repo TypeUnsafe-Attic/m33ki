@@ -18,12 +18,11 @@ function Mongo =  {
   let db = DynamicObject()  # default values
     :host("localhost")
     :port(27017)
-    :getDBInstance(|this, dataBaseName| {
+    :database(|this, dataBaseName| { # getDBInstance
       this: mongoClient(MongoClient(this: host(), this: port()))
       this: db(this: mongoClient(): getDB(dataBaseName))
       return this
     })
-    :database(|this, dataBaseName| -> this: getDBInstance(dataBaseName))
     :collection(|this, collectionName| {
       return this: db(): getCollection(collectionName)
     })
@@ -106,6 +105,11 @@ function MongoModel = |mongoCollection|{
   return mongoModel
 }
 
+# http://api.mongodb.org/java/2.11.4/com/mongodb/DBCursor.html
+# http://api.mongodb.org/java/2.11.4/com/mongodb/QueryBuilder.html
+# http://stackoverflow.com/questions/14314692/simple-query-in-mongodb-in-java
+
+
 function MongoCollection = |mongoModel, mongoCollection|{
   let mongoColl = DynamicObject()
 
@@ -115,9 +119,11 @@ function MongoCollection = |mongoModel, mongoCollection|{
 
   mongoColl: collection(mongoCollection)
 
-  # get all models
-  mongoColl: fetchAllReadable(|this| {
-    let cursor = this: collection(): find()
+  mongoColl: skip(null)
+  mongoColl: limit(null)
+  mongoColl: sort(null)
+
+  let cursorToList = |cursor| { # return list of HashMaps
     let models = list[]
     cursor: each(|doc| {
       let map = doc: toMap()
@@ -125,27 +131,58 @@ function MongoCollection = |mongoModel, mongoCollection|{
       map: put("_id", id)
       models: add(map)
     })
-    cursor: close()
     return models
+  }
+
+
+  mongoColl: options(|this, cursor| {
+    if this: sort() isnt null {
+      cursor: sort(BasicDBObject(this: sort(): get(0), this: sort(): get(1)))
+      this: sort(null)
+    }
+    if this: skip() isnt null {
+      cursor: skip(this: skip()): limit(this: limit())
+      this: skip(null): limit(null)
+    }
+    return cursor
   })
 
-  # find models
-  #coll: find("firstName", "John") (! return memory collection)
-  mongoColl: findReadable(|this, fieldName, value| {
-
-    let cursor = this: collection()
-      : find(BasicDBObject(fieldName, value))
-    let models = list[]
-
-    cursor: each(|doc| {
-      let map = doc: toMap()
-      let id = doc: getObjectId("_id"): toString()
-      map: put("_id", id)
-      models: add(map)
-    })
-    cursor: close()
-    return models
+  # get all models (value objects)
+  mongoColl: fetch(|this| {
+    let cursor = this: collection(): find() # lazy fetch
+    this: options(cursor)
+    return cursorToList(cursor)
   })
+
+  # find models (value objects)
+  #coll: find("firstName", "John")
+  mongoColl: find(|this, fieldName, value| {
+    let query = BasicDBObject(fieldName, value)
+    let cursor = this: collection(): find(query)
+    this: options(cursor)
+    return cursorToList(cursor)
+  })
+
+  #coll: like("firstName", ".*o.*")
+  mongoColl: like(|this, fieldName, value| {
+    let query = BasicDBObject(fieldName, java.util.regex.Pattern.compile(value))
+    let cursor = this: collection(): find(query)
+    this: options(cursor)
+    return cursorToList(cursor)
+  })
+
+  mongoColl: query(|this, query| {
+    # query is a com.mongodb.QueryBuilder
+    let cursor = this: collection(): find(query)
+    this: options(cursor)
+    return cursorToList(cursor)
+  })
+  # let query = QueryBuilder.start("pseudo"): notEquals("@sam"): get()
+  # buddies: query(query)
 
   return mongoColl
 }
+
+function Qb = |start|-> com.mongodb.QueryBuilder.start(start)
+
+
