@@ -11,6 +11,7 @@ import java.io.File
 local function static = |path_static| -> externalStaticFileLocation(File("."): getCanonicalPath() + path_static)
 local function port = |port_number| -> setPort(port_number)
 
+function stop = |number, body| -> spark.AbstractRoute.halt(number, body)
 
 function initialize = {
 
@@ -49,22 +50,85 @@ function initialize = {
 
 }
 
-function route = |uri, method| {
+
+# Routes
+----
+####Sample
+
+    GET("/about"
+      , |request, response| {
+          println("plop")
+        }
+      , |request, response| {
+          println("plop plop")
+        }
+      , |request, response| ->
+          controllers.application.ApplicationController(): about(request, response)
+    )
+
+    GET("/authenticate"
+      , |request, response| {
+          let session = request: session(true)
+          session: attribute("authenticated", true)
+          return "Hello"
+        }
+    )
+
+    GET("/logout"
+      , |request, response| {
+          let session = request: session(true)
+          session: attribute("authenticated", false)
+          return "Bye"
+        }
+    )
+
+    # check authentication
+    let check = |request, response| {
+      println("checking")
+      let session = request: session(true)
+
+      if session: attribute("authenticated") is true {
+        println("all is ok")
+      } else {
+        # response: redirect("/")
+        # return false
+        return [false, "<h1>Don't even think about this!</h1>"]
+      }
+    }
+
+    GET("/try"
+      , check # check authentication
+      , |request, response| {
+          return "<h1>Victory</h1>"
+        }
+    )
+----
+function route = |uri, closures| {
   let conf = map[
     ["extends", "spark.Route"],
     ["implements", map[
       ["handle", |this, request, response| {
           try {
-            return method(request, response)
+            var res = null
+            foreach(closure in closures) {
+              res = closure(request, response)
+
+              if res oftype gololang.Tuple.class {
+                if res: get(0) is false {
+                  res = res: get(1)
+                  break
+                }
+              } else {
+                if res is false {
+                  break
+                }
+              }
+            }
+            return res
+            #return method(request, response)
           } catch(e) {
             e:printStackTrace()
-
-            #request: session(): attribute("error_msg", e: getMessage())
-            #request: session(): attribute("error_stk", e: getStackTrace(): toString())
-
             request: session(): attribute("error", e)
-
-            #request: session(): attribute("error_stk", Json(): toJsonString(e: getStackTrace()))
             response: redirect("error")
             #throw e # ???
           }
@@ -77,20 +141,20 @@ function route = |uri, method| {
 }
 
 
-function GET = |uri, method| {
-  return spark.Spark.get(route(uri, method))
+function GET = |uri, handles...| { # uri = path
+  return spark.Spark.get(route(uri, handles))
 }
 
-function POST = |uri, method| {
-  return spark.Spark.post(route(uri, method))
+function POST = |uri, handles...| {
+  return spark.Spark.post(route(uri, handles))
 }
 
-function PUT = |uri, method| {
-  return spark.Spark.put(route(uri, method))
+function PUT = |uri, handles...| {
+  return spark.Spark.put(route(uri, handles))
 }
 
-function DELETE = |uri, method| {
-  return spark.Spark.delete(route(uri, method))
+function DELETE = |uri, handles...| {
+  return spark.Spark.delete(route(uri, handles))
 }
 
 
