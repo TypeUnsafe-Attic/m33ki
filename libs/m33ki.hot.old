@@ -147,6 +147,7 @@ function filesDiscover = |path, extension, listOfFiles, root| {
   return listOfFiles
 }
 
+
 function javaCompile = |path| {
 
   let OS = java.lang.System.getProperty("os.name"): toLowerCase()
@@ -200,6 +201,14 @@ function listenForChangeThenCompile = |path, javaSourcePath, packageBaseName, ja
       ["onDirectoryChange", |this, pDir| {
         println("Content in " + pDir: getName() + " has changed ....")
 
+        #println("Java classes compiling ...")
+        #javaCompile(javaSourcePath)
+
+        #println("Jar creating ...")
+        #createZip(java.io.File(javaSourcePath): getAbsolutePath() +"/"+packageBaseName, java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar")
+
+        #println("Application is restarting ...")
+        #java.lang.System.exit(1)
       }],
       ["onFileChange", |this, pFile| {
 
@@ -244,6 +253,20 @@ function compileAndCreateJar = |javaSourcePath, packageBaseName, jarPath, jarNam
 }
 
 function doesThisJarExist = |jarPath, jarName| -> File(java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar"): exists()
+
+# deprecated
+function atLeastOneFileYoungerThanJar = |javaSourcePath, jarPath, jarName| {
+  let javaFiles = filesDiscover(javaSourcePath, "java", list[], javaSourcePath)
+  let runCompilation = DynamicObject():value(false)
+
+  javaFiles: each(|filePathName| {
+    var javaFile = File(filePathName)
+    if javaFile: lastModified() < File(java.io.File(jarPath): getAbsolutePath()+"/"+jarName+".jar"): lastModified() {
+      runCompilation: value(true)
+    }
+  })
+  return runCompilation: value()
+}
 
 function compileIfNotJar = |javaSourcePath, packageBaseName, jarPath, jarName| {
 
