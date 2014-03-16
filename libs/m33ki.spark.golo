@@ -8,6 +8,26 @@ import m33ki.hot
 import spark.Spark
 import java.io.File
 
+import spark.Response
+
+# CORS support
+----
+#### Sample
+
+  GET("/hello/:who", |request, response| {
+    response: type("application/json")
+    response: allowCORS("*", "*", "*")
+    return json: message("hello " + request: params(":who"))
+  })
+----
+augment spark.Response {
+  function allowCORS = |this, origin, methods, headers| {
+    this: header("Access-Control-Allow-Origin", origin)
+    this: header("Access-Control-Request-Method", methods)
+    this: header("Access-Control-Allow-Headers", headers)
+  }
+}
+
 local function static = |path_static| -> externalStaticFileLocation(File("."): getCanonicalPath() + path_static)
 local function port = |port_number| -> setPort(port_number)
 
