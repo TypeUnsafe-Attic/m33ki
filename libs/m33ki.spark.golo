@@ -21,10 +21,32 @@ import spark.Response
   })
 ----
 augment spark.Response {
+  # === CORS support ===
   function allowCORS = |this, origin, methods, headers| {
     this: header("Access-Control-Allow-Origin", origin)
     this: header("Access-Control-Request-Method", methods)
     this: header("Access-Control-Allow-Headers", headers)
+    return this
+  }
+  # === Server-Sent Events ===
+  function initializeSSE = |this| {
+    this: type("text/event-stream")
+    this: header("Cache-Control", "no-cache")
+    this: header("Connection", "keep-alive")
+    this: status(200)
+    this: raw(): setCharacterEncoding("UTF-8")
+    return this
+  }
+  function writeSSE = |this, data| {
+    let SSEData = "data:" + data + "\n\n"
+    let out = this: raw(): getWriter()
+    out: println(SSEData)
+    out: flush()
+    return this
+  }
+  function closeSSE = |this| {
+    this: raw(): getWriter(): close()
+    return this
   }
 }
 

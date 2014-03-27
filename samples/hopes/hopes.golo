@@ -27,7 +27,7 @@ function main = |args| {
 
   initialize(): static("/samples/hopes/public"): port(8888): error(true)
 
-  let iterations = DynamicObject(): value(10)
+  let iterations = DynamicObject(): value(50)
 
   GET("/pi", |request, response| {
 
@@ -48,7 +48,10 @@ function main = |args| {
       })
       : go(iterations: value())
 
-    iterations: value(iterations: value()+20)
+    sse: write(Json(): toJsonString(map[["message", "TADDAAAAAA"]]))
+    sse: write(Json(): toJsonString(map[["message", "TADDAAAAAA"]]))
+
+    #iterations: value(iterations: value()+20)
 
     let pi = hope: promise(): blockingGet()
 

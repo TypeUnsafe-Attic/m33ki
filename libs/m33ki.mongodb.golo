@@ -1,4 +1,4 @@
-module m33ki.mongodb2
+module m33ki.mongodb
 
 import com.mongodb.MongoClient
 import com.mongodb.MongoException
@@ -14,52 +14,53 @@ import org.bson.types.ObjectId
 import m33ki.collections
 import m33ki.jackson
 
-function Mongo =  {
+
+function Mongo =  { # configuration
+
   let db = DynamicObject()  # default values
-    :host("localhost")
-    :port(27017)
-    :database(|this, dataBaseName| { # getDBInstance
-      this: mongoClient(MongoClient(this: host(), this: port()))
-      this: db(this: mongoClient(): getDB(dataBaseName))
-      return this
+    : host("localhost")     # easily change because it's a DynamicObject
+    : port(27017)
+    : define("database", |this, dataBaseName| { # getDBInstance
+        this: mongoClient(MongoClient(this: host(), this: port()))
+        this: db(this: mongoClient(): getDB(dataBaseName))
+        return this
     })
-    :collection(|this, collectionName| {
-      return this: db(): getCollection(collectionName)
+    : define("collection", |this, collectionName| { # returns a com.mongodb.DBCollection
+        return this: db(): getCollection(collectionName)
     })
 
   return db
 }
 
-function MongoModel = |mongoCollection|{
 
-  let mongoModel = DynamicObject()
-  let collection = mongoCollection
-  let basicDBObject = BasicDBObject()
+function MongoModel = |db_collection| {
+  # db_collection is a com.mongodb.DBCollection
 
-  mongoModel: collection(collection)
-  mongoModel: basicDBObject(basicDBObject)
+  # private variable
+  let collection = db_collection
+  #var basicDBObject = BasicDBObject()
 
-  mongoModel: getId(|this| {
+  let mongoModel = DynamicObject(): basicDBObject(BasicDBObject())
+
+  mongoModel: define("getId", |this| {
     return this: basicDBObject(): getObjectId("_id"): toString()
   })
 
-  #mongoModel: fields(basicDBObject)
-
-  mongoModel: setField(|this, fieldName, lastName| {
+  mongoModel: define("setField", |this, fieldName, lastName| {
     this: basicDBObject(): put(fieldName, lastName)
     return this
   })
 
-  mongoModel: getField(|this, fieldName| {
+  mongoModel: define("getField", |this, fieldName| {
     return this: basicDBObject(): get(fieldName)
   })
 
-  mongoModel: insert(|this| {
+  mongoModel: define("insert", |this| {
     collection: insert(this: basicDBObject())
     return this
   })
 
-  mongoModel: update(|this| {
+  mongoModel: define("update", |this| {
     let id = this: basicDBObject(): get("_id")
     this: basicDBObject(): removeField("_id")
     let searchQuery = BasicDBObject(): append("_id", ObjectId(id))
@@ -68,41 +69,43 @@ function MongoModel = |mongoCollection|{
     return this
   })
 
-  mongoModel: fetch(|this, id| {
+  mongoModel: define("fetch", |this, id| {
     let searchQuery = BasicDBObject(): append("_id", ObjectId(id))
     this: basicDBObject(): putAll(collection: findOne(searchQuery))
     return this
   })
 
-  mongoModel: remove(|this, id| {
-
+  mongoModel: define("remove", |this, id| {
     let searchQuery = BasicDBObject(): append("_id", ObjectId(id))
-    #let doc = collection: findOne(searchQuery)
     let doc = collection: find(searchQuery): next()
     this: basicDBObject(): putAll(doc)
-    #collection: remove(this: basicDBObject())
     collection: remove(doc)
     return this
   })
 
-  mongoModel: readable(|this| {
+  mongoModel: define("readable", |this| { # return map
     let map = this: basicDBObject(): toMap()
     map: put("_id", this: getId())
     return map
   })
 
-  mongoModel: toJsonString(|this| {
+  mongoModel: define("fromMap", |this, fieldsMap| {
+    this: basicDBObject(BasicDBObject(fieldsMap))
+    return this
+  })
+
+  mongoModel: define("toJsonString", |this| {
     return Json(): toJsonString(this: readable())
   })
 
-  mongoModel: fromJsonString(|this, body| {
+  mongoModel: define("fromJsonString", |this, body| {
     let bo = BasicDBObject()
     bo: putAll( Json(): toTreeMap(body) )
     this: basicDBObject(bo)
     return this
   })
 
-  return mongoModel
+  return mongoModel # this is a DynamicObject
 }
 
 # http://api.mongodb.org/java/2.11.4/com/mongodb/DBCursor.html
@@ -110,19 +113,13 @@ function MongoModel = |mongoCollection|{
 # http://stackoverflow.com/questions/14314692/simple-query-in-mongodb-in-java
 
 
-function MongoCollection = |mongoModel, mongoCollection|{
-  let mongoColl = DynamicObject()
+function MongoCollection = |mongoModel, db_collection|{
+  # db_collection is a com.mongodb.DBCollection
 
-  mongoColl: define("model", |this| {
-    return mongoModel(mongoCollection)
-  })
+  # private variable
+  let collection = db_collection
 
-  mongoColl: collection(mongoCollection)
-
-  mongoColl: skip(null)
-  mongoColl: limit(null)
-  mongoColl: sort(null)
-
+  # helpers :
   let cursorToList = |cursor| { # return list of HashMaps
     let models = list[]
     cursor: each(|doc| {
@@ -134,8 +131,15 @@ function MongoCollection = |mongoModel, mongoCollection|{
     return models
   }
 
+  let mongoCollection = DynamicObject()
+    : skip(null)
+    : limit(null)
+    : sort(null)
 
-  mongoColl: options(|this, cursor| {
+  mongoCollection: define("model", |this| -> mongoModel(db_collection)) # "model factory"
+
+
+  mongoCollection: define("options", |this, cursor| {
     if this: sort() isnt null {
       cursor: sort(BasicDBObject(this: sort(): get(0), this: sort(): get(1)))
       this: sort(null)
@@ -148,41 +152,52 @@ function MongoCollection = |mongoModel, mongoCollection|{
   })
 
   # get all models (value objects)
-  mongoColl: fetch(|this| {
-    let cursor = this: collection(): find() # lazy fetch
+  mongoCollection: define("fetch", |this| {
+    let cursor = collection: find() # lazy fetch
     this: options(cursor)
     return cursorToList(cursor)
   })
 
   # find models (value objects)
   #coll: find("firstName", "John")
-  mongoColl: find(|this, fieldName, value| {
+  mongoCollection: define("find", |this, fieldName, value| {
     let query = BasicDBObject(fieldName, value)
-    let cursor = this: collection(): find(query)
+    let cursor = collection: find(query)
     this: options(cursor)
     return cursorToList(cursor)
   })
 
   #coll: like("firstName", ".*o.*")
-  mongoColl: like(|this, fieldName, value| {
+  mongoCollection: define("like", |this, fieldName, value| {
     let query = BasicDBObject(fieldName, java.util.regex.Pattern.compile(value))
-    let cursor = this: collection(): find(query)
+    let cursor = collection: find(query)
     this: options(cursor)
     return cursorToList(cursor)
   })
 
-  mongoColl: query(|this, query| {
+  mongoCollection: define("query", |this, query| {
     # query is a com.mongodb.QueryBuilder
-    let cursor = this: collection(): find(query)
+    let cursor = collection: find(query)
     this: options(cursor)
     return cursorToList(cursor)
   })
   # let query = QueryBuilder.start("pseudo"): notEquals("@sam"): get()
   # buddies: query(query)
 
-  return mongoColl
+  return mongoCollection # this is a DynamicObject
 }
 
+# helper
+# http://api.mongodb.org/java/2.12/com/mongodb/QueryBuilder.html
 function Qb = |start|-> com.mongodb.QueryBuilder.start(start)
+
+augment com.mongodb.QueryBuilder {
+  function isEquals = |this, object| {
+    return this: `is(object)
+  }
+}
+
+# let query = Qb("pseudo"): notEquals("@sam"): get()
+# buddies: query(query)
 
 

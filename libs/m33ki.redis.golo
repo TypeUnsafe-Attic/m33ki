@@ -24,6 +24,28 @@ augment redis {
 }
 
 # constructor
+----
+##Sample :
+##Sample
+
+    #let redis = Redis(): host("localhost"): port(6379): connect()
+    let redis = Redis(): connect()
+
+    redis: save("superhero:peter",
+      map[["firstName", "Peter"],["lastName", "Parker"]])
+
+    redis: save("superhero:clark",
+      map[["firstName", "Clark"],["lastName", "Kent"]])
+
+    println(redis: fetch("superhero:peter"))
+    println(redis: fetch("superhero:clark"))
+
+    println("===========================")
+
+    redis: all("superhero:*"): each(|hero|{
+      println(hero)
+    })
+----
 function Redis = { # with default parameters
   return redis(): host("localhost"): port(6379)
 }

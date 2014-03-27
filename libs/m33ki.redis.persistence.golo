@@ -1,32 +1,49 @@
 module m33ki.redis.persistence
 
-import redis
+import m33ki.redis
 
-struct model = {
-  kind,
-  fields
+function Model = |kind| {
+  return DynamicObject()
+    : kind(kind)
+    : fields(map[])
+    : define("getField", |this, fieldName| -> this: fields(): get(fieldName))
+    : define("setField", |this, fieldName, value| {
+        this: fields(): put(fieldName, value)
+        return this
+    })
 }
 
-struct persistenceHelper = {
-  kind,
-  redisDb
-}
+function Collection = |redisDb, model_definition| {
 
-augment persistenceHelper {
-  function save = |this, model| {
-    require(
-      model: kind() isnt null and
-      model: kind(): equals(this: kind()) and
-      model: fields() isnt null and
-      model: fields(): get("id") isnt null,
-      "not a model or bad kind of model!"
+  let model = model_definition
+
+  model
+    : define("save", |this| {
+        let key = this: kind() + ":" + this: fields(): get("id")
+        redisDb: save(key, this: fields())
+        return this
+    })
+    : define("fetch", |this| {
+      let fields = redisDb: fetch(this: kind() + ":" + this: fields(): get("id"))
+      this: fields(fields)
+      return this
+    })
+    : define("delete", |this| {
+      redisDb: delete(this: kind() + ":" + this: fields(): get("id"))
+      this: fields(null)
+      return this
+    })
+
+  return DynamicObject()
+    : define("model", |this| { # get instance of Model
+        return model: copy()
+    })
+    : define("all", |this, qKey| -> # java.util.HashSet
+        redisDb: allKeys(model: kind() + ":" + qKey): map(|key| -> this: model(): fields(redisDb: fetch(key)))
     )
-    this: redisDb(): save(model: kind() + ":" + model: fields(): get("id"), model: fields())
-  }
-  function fetch = |this, key| -> this: redisDb(): fetch(this: kind() + ":" + key)
-  function all = |this, qKey| -> this: redisDb(): all(this: kind() + ":" + qKey)
-  function delete = |this, key| -> this: redisDb(): delete(this: kind() + ":" + key)
-
 }
+
+
+
 
 
