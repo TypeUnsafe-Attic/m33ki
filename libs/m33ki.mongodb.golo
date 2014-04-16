@@ -33,6 +33,34 @@ function Mongo =  { # configuration
 }
 
 
+----
+    # Collection
+    function Humans = {
+      let dbCollection = Mongo(): database("demodb_devoxx_01"): collection("humans")
+
+      # Model
+      let humanModel = |db_collection| ->
+        MongoModel(db_collection)
+          : define("setName", |this, name| {
+              this: setField("name", name)
+              return this
+          })
+          : define("getName", |this| -> this: getField("name"))
+          : define("setAge", |this, age| {
+              this: setField("age", age)
+              return this
+          })
+          : define("getAge", |this| -> this: getField("age"))
+
+
+      # Collection
+      let humansCollection = MongoCollection(humanModel , dbCollection)
+
+      # Add methods to collection
+
+      return humansCollection
+    }
+----
 function MongoModel = |db_collection| {
   # db_collection is a com.mongodb.DBCollection
 
@@ -71,7 +99,11 @@ function MongoModel = |db_collection| {
 
   mongoModel: define("fetch", |this, id| {
     let searchQuery = BasicDBObject(): append("_id", ObjectId(id))
-    this: basicDBObject(): putAll(collection: findOne(searchQuery))
+    #this: basicDBObject(): putAll(collection: findOne(searchQuery))
+    collection: find(searchQuery): each(|doc| {
+      this: basicDBObject(): putAll(doc)
+    })
+    #println(collection: find(searchQuery))
     return this
   })
 
@@ -113,6 +145,58 @@ function MongoModel = |db_collection| {
 # http://stackoverflow.com/questions/14314692/simple-query-in-mongodb-in-java
 
 
+----
+##INSERT
+
+    # new collection
+    let humans = Humans()
+
+    # new models
+    let bob = humans: model(): setName("Bob Morane"): setAge(38): insert()
+    let bill = humans: model(): setName("Bill Ballantine"): setAge(45): insert()
+    let ylang = humans: model(): setName("Miss Ylang-Ylang"): setAge(27): insert()
+    let ombre = humans: model(): setName("Ombre Jaune"): setAge(99): insert()
+
+##READ
+
+    # new collection
+    let humans = Humans()
+
+    # get all
+    println("=== Get All Humans ===")
+
+    humans: fetch(): each(|human| -> println("- " + human))
+
+    # descending sort
+    println("=== Get All Humans (sorted) ===")
+
+    humans: sort(["name", -1]): fetch(): each(|human| -> println("- " + human))
+
+    println("=== Get All Humans (less than 39 years old) ===")
+
+    humans: query(
+        Qb("age"): lessThan(39): get()
+      ): each(|human| -> println("- " + human))
+
+
+##FIND/UPDATE
+
+    # new collection
+    let humans = Humans()
+
+    # find first and update
+    println("=== Find and update ===")
+
+    let bob_map = humans: query(Qb("name"): isEquals("Bob Morane"): get()): get(0)
+
+    println(bob_map)
+
+    let bob = humans: model(): fromMap(bob_map)
+
+    bob: setAge(35): update()
+
+    println(humans: query(Qb("age"): isEquals(35): get()): get(0))
+----
 function MongoCollection = |mongoModel, db_collection|{
   # db_collection is a com.mongodb.DBCollection
 

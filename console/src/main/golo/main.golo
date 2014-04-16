@@ -91,10 +91,14 @@ function main = |args| {
 
   println("Creating %s application":format(appName))
   try {
-    println("1- copy %s to %s":format(sourceDir_m33ki_jars, targetDir_application))
+    println("1- copying jars files")
+    #println("1- copy %s to %s":format(sourceDir_m33ki_jars, targetDir_application))
     FileUtils.copyDirectory(srcDir_m33ki_jars, tgtDir_application_jars)
-    println("2- copy %s to %s":format(sourceDir_m33ki_libs, targetDir_application))
+
+    println("2- copying golo files")
+    #println("2- copy %s to %s":format(sourceDir_m33ki_libs, targetDir_application))
     FileUtils.copyDirectory(srcDir_m33ki_libs, tgtDir_application_libs)
+
     println("")
 
     #let applications = map[
@@ -107,7 +111,7 @@ function main = |args| {
     var applications = null
 
     if fileExists(sourceDir+"/m33ki.json") {
-      println("reading configuration file")
+      #println("reading configuration file")
       let jsonConf = fileToText(sourceDir+"/m33ki.json", "UTF-8")
 
       let mapper = ObjectMapper()
@@ -121,10 +125,6 @@ function main = |args| {
     } else {
       raise("Where is the m33ki.json?!")
     }
-
-    # TODO: configuration file
-    #, ["4", ["Hybrid (Golo + Java) + REST Routes", "hybridrest"]]
-    #, ["5", ["Gandalf : CRUD Webapp + backbone", "gandalf"]]
 
     # choose kind of application
     println("What kind of application ?")

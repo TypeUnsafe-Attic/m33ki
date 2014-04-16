@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="description" content="generated thanks to hi and golo">
+  <meta name="author" content="k33g0rg">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="stylesheet" href="js/vendors/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="js/vendors/bootstrap/css/bootstrap-theme.min.css">
+
+</head>
+<body>
+  <div class="container">
+    <big-title></big-title>
+  </div>
+  <div class="container">
+    <!-- some components here -->
+  </div>
+
+  <script src="js/vendors/jquery.min.js"></script>
+  <script src="js/vendors/underscore.js"></script>
+  <script src="js/vendors/backbone.js"></script>
+  <script src="js/vendors/bootstrap/js/bootstrap.min.js"></script>
+  <script src="js/vendors/react.min.js"></script>
+  <script src="js/vendors/JSXTransformer.js"></script>
+
+  <script src="js/all.scripts.js"></script>
+
+  <script type="text/jsx">
+      /** @jsx React.DOM */
+      var messageTitle = "Hello World from M33ki";
+
+      React.renderComponent(
+        <BigTitle message={messageTitle}/>,
+        document.querySelector('big-title')
+      );
+  </script>
+
+
+</body>
+</html>
