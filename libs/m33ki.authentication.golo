@@ -115,10 +115,10 @@ function UserWithRights = |securityKey| {
 
 function findOrCreateAdmin = |users, pseudo, password| {
 
-   let admins = users: findReadable("pseudo", pseudo)
+   let admins = users: find("pseudo", pseudo)
 
    if admins: size() > 0 {
-     let admin = admins: getFirst()
+     let admin = admins: get(0)
      println("--> Admin exists!!! : " + admin)
    } else {
      # create a default admin
