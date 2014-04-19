@@ -313,26 +313,24 @@ function route = |uri, closures| {
 
 
 function GET = |uri, handles...| { # uri = path
-  return spark.Spark.get(route(uri, handles))
+  spark.Spark.get(route(uri, handles))
 }
 
 function POST = |uri, handles...| {
-  return spark.Spark.post(route(uri, handles))
+  spark.Spark.post(route(uri, handles))
 }
 
 function PUT = |uri, handles...| {
-  return spark.Spark.put(route(uri, handles))
+  spark.Spark.put(route(uri, handles))
 }
 
 function DELETE = |uri, handles...| {
-  return spark.Spark.delete(route(uri, handles))
+  spark.Spark.delete(route(uri, handles))
 }
 
 
 function define_error_redirection = {
   GET("/error", |request, response| {
-
-    response:type("text/html")
 
     let data = DynamicObject()
       : description(request: session(): attribute("error"): toString())
@@ -376,7 +374,7 @@ function define_error_redirection = {
 		"""
 		:T("data", data)
 
-    return html_response
+    response: html(html_response): status(500)
 
   })
 }
