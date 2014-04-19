@@ -2,71 +2,41 @@ module simple
 
 import m33ki.spark
 import m33ki.jackson
-import m33ki.models
-import m33ki.collections
-import m33ki.strings
 
 function main = |args| {
 
-  let humans = Collection()
+  let humans = list[]
 
   # create some humans
-  let bob = Model()
-    : setField("firstName", "Bob")
-    : setField("lastName", "Morane")
-    : setField("id", "bob")
+  let bob = map[["id", "bob"], ["firstName", "Bob"], ["lastName", "Morane"]]
+  let john = map[["id", "john"], ["firstName", "John"], ["lastName", "Doe"]]
+  let jane = map[["id", "jane"], ["firstName", "Jane"], ["lastName", "Doe"]]
 
-  let john = Model()
-    : setField("firstName", "John")
-    : setField("lastName", "Doe")
-    : setField("id", "john")
+  humans: append(bob): append(john): append(jane)
 
-  let jane = Model()
-    : setField("firstName", "Jane")
-    : setField("lastName", "Doe")
-    : setField("id", "jane")
-
-  println(bob: toJsonString())
-
-  humans: addItem(bob): addItem(john): addItem(jane)
-
-  initialize(): static("/samples/simple/public"): port(8888): error(true)
+  initialize(): static("/samples/simple/public"): port(8888)
 
   # Create a human
   POST("/humans", |request, response| {
-    response: type("application/json")
-    let human = Model(): fromJsonString(request: body())
-    human: generateId()
-    humans: addItem(human)
+    let human = Json(): toTreeMap(request: body())
+    human: put("id", java.util.UUID.randomUUID(): toString())
+    humans: append(human)
 
-    response: status(201) # 201: created
-    return human: toJsonString()
+    response: json(Json(): toJsonString(human)): status(201) # 201: created
   })
 
   # Retrieve all humans
   GET("/humans", |request, response| {
-    response: type("application/json")
-    return humans: toJsonString()
+    response: json(Json(): toJsonString(humans)): status(200)
   })
 
   # Retrieve a human by id
   GET("/humans/:id", |request, response| {
-    response: type("application/json")
-
-    let human = humans: getItem(request: params(":id"))
-
-    if human isnt null{
-      return human: toJsonString()
-    } else {
-      response: status(404) # 404 Not found
-      return Json(): toJsonString(map[["message", "Human not found"]])
-    }
-  })
-
-  # generate error
-  GET("/stop", |request, response| {
-    let a = 5/0
-    return null
+    response: json(
+      Json(): toJsonString(
+        humans: filter(|human| -> human: get("id"): equals(request: params(":id"))): get(0)
+      )
+    ): status(200)
   })
 
 }

@@ -48,6 +48,7 @@ augment spark.Response {
     this: raw(): getWriter(): close()
     return this
   }
+
 }
 
 local function static = |path_static| -> externalStaticFileLocation(File("."): getCanonicalPath() + path_static)
@@ -93,6 +94,139 @@ function initialize = {
 }
 
 
+struct m33kiResponse = {
+    sparkResponse
+  , content
+  , forbidden
+}
+#TODO: add CORS, SSE
+augment m33kiResponse {
+
+  function redirect = |this, url| {
+    this: sparkResponse(): redirect(url)
+    return this
+  }
+
+  function raw = |this| -> this: sparkResponse(): raw()
+
+  function redirect = |this, url, status| {
+    this: sparkResponse(): redirect(url, status)
+    return this
+  }
+
+  function header = |this, header, value| {
+    this: sparkResponse(): header(header, value)
+    return this
+  }
+
+  function body = |this| -> this: sparkResponse(): body()
+
+  function body = |this, body| {
+    this: sparkResponse(): body(body)
+    return this
+  }
+
+  function cookie = |this, name, value| {
+    this: sparkResponse(): cookie(name, value)
+    return this
+  }
+
+  function cookie = |this, name, value, maxAge| {
+    this: sparkResponse(): cookie(name, value, maxAge)
+    return this
+  }
+
+  function cookie = |this, name, value, maxAge, secured| {
+    this: sparkResponse(): cookie(name, value, maxAge, secured)
+    return this
+  }
+
+  function cookie = |this, path, name, value, maxAge, secured| {
+    this: sparkResponse(): cookie(path, name, value, maxAge, secured)
+    return this
+  }
+
+  function removeCookie = |this, name| {
+    this: sparkResponse(): removeCookie(name)
+    return this
+  }
+
+
+  function json = |this, content| {
+    this: content(content)
+    this: sparkResponse(): type("application/json")
+    return this
+  }
+  function html = |this, content| {
+    this: content(content)
+    this: sparkResponse(): type("text/html")
+    return this
+  }
+  function text = |this, content| {
+    this: content(content)
+    this: sparkResponse(): type("text/plain")
+    return this
+  }
+  function xml = |this, content| {
+    this: content(content)
+    this: sparkResponse(): type("text/xml")
+    return this
+  }
+  function type = |this, str_type| { # response: type("application/json"): content("{}")
+    this: sparkResponse(): type(str_type)
+    return this
+  }
+  function status = |this, num_status| {
+    this: sparkResponse(): status(num_status)
+    return this
+  }
+  function $200 = |this| {
+    this: sparkResponse(): status(200)
+    return this
+  }
+  function $201 = |this| {
+    this: sparkResponse(): status(201)
+    return this
+  }
+  function $301 = |this| {
+    this: sparkResponse(): status(301)
+    return this
+  }
+  function $400 = |this| {
+    this: sparkResponse(): status(404)
+    return this
+  }
+  function $404 = |this| {
+    this: sparkResponse(): status(404)
+    return this
+  }
+  function $500 = |this| {
+    this: sparkResponse(): status(500)
+    return this
+  }
+
+  # === CORS support ===
+  function allowCORS = |this, origin, methods, headers| {
+    this: sparkResponse(): allowCORS(origin, methods, headers)
+    return this
+  }
+  # === Server-Sent Events ===
+  function initializeSSE = |this| {
+    this: sparkResponse(): initializeSSE()
+    return this
+  }
+  function writeSSE = |this, data| {
+    this: sparkResponse(): writeSSE(data)
+    return this
+  }
+  function closeSSE = |this| {
+    this: sparkResponse(): closeSSE()
+    return this
+  }
+
+}
+
+
 # Routes
 ----
 ####Sample
@@ -112,7 +246,7 @@ function initialize = {
       , |request, response| {
           let session = request: session(true)
           session: attribute("authenticated", true)
-          return "Hello"
+          response: text("Hello")
         }
     )
 
@@ -120,7 +254,7 @@ function initialize = {
       , |request, response| {
           let session = request: session(true)
           session: attribute("authenticated", false)
-          return "Bye"
+          response: text("Bye")
         }
     )
 
@@ -133,15 +267,14 @@ function initialize = {
         println("all is ok")
       } else {
         # response: redirect("/")
-        # return false
-        return [false, "<h1>Don't even think about this!</h1>"]
+        response: html("<h1>Don't even think about this!</h1>"): forbidden(true)
       }
     }
 
     GET("/try"
       , check # check authentication
       , |request, response| {
-          return "<h1>Victory</h1>"
+          response: html("<h1>Victory</h1>")
         }
     )
 ----
@@ -153,22 +286,18 @@ function route = |uri, closures| {
           try {
             var res = null
             foreach(closure in closures) {
-              res = closure(request, response)
 
-              if res oftype gololang.Tuple.class {
-                if res: get(0) is false {
-                  res = res: get(1)
-                  break
-                }
-              } else {
-                if res is false {
-                  break
-                }
+              let m33ki_response = m33kiResponse(response, null, false)
+              closure(request, m33ki_response)
+              res = m33ki_response: content()
+
+              if m33ki_response: forbidden() is true {
+                break
               }
             }
             return res
             #return method(request, response)
-          } catch(e) {
+          } catch(e) { #TODO: change that
             e:printStackTrace()
             request: session(): attribute("error", e)
             response: redirect("error")

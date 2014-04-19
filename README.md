@@ -81,16 +81,6 @@ WIP
 
 WIP
 
-##Asynchronous model ... if you want
-
-###Promises (hopes)
-
-WIP
-
-###Actors
-
-WIP
-
 ##Modern web & mobile.
 
 M33ki was built for needs of modern web & mobile apps.
@@ -105,40 +95,45 @@ M33ki was built for needs of modern web & mobile apps.
 ```coffeescript
 # Create a model
 POST("/models", |request, response| {
-  response: type("application/json")
   println(request: body())
-  response: status(201) # 201: created
-  return Json(): toJsonString(map[["message", "this is a POST request"]])
+  response: json(Json(): toJsonString(map[["message", "this is a POST request"]])): status(201) # 201: created
 })
 
 # Retrieve all models
 GET("/models", |request, response| {
-  response: type("application/json")
-  return Json(): toJsonString(map[["message", "this is a GET request"]])
+  response: json(Json(): toJsonString(map[["message", "this is a GET request"]]))
 })
 
 # Retrieve a model by id
 GET("/models/:id", |request, response| {
-  response: type("application/json")
   let id = request: params(":id")
-  return Json(): toJsonString(map[["message", "this is a GET request with id="+id]])
+  response: json(Json(): toJsonString(map[["message", "this is a GET request with id="+id]]))
 })
 
 # Update model
 PUT("/models/:id", |request, response| {
-  response: type("application/json")
   println(request: body())
   let id = request: params(":id")
-  return Json(): toJsonString(map[["message", "this is a PUT request with id="+id]])
+  response: json(return Json(): toJsonString(map[["message", "this is a PUT request with id="+id]]))
 })
 
 # Delete model
 DELETE("/models/:id", |request, response| {
-  response: type("application/json")
   let id = request: params(":id")
-  return Json(): toJsonString(map[["message", "this is a DELETE request with id="+id]])
+  response: json(return Json(): toJsonString(map[["message", "this is a DELETE request with id="+id]]))
 })
 ```
+
+##Asynchronous model ... if you want
+
+###Promises (hopes)
+
+WIP
+
+###Actors
+
+WIP
+
 
 ##Install M33ki
 
@@ -212,6 +207,4 @@ You can create project template in `/templates` directory of M33ki distribution.
 ##W.I.P.
 
 - Documentation
-- Front framework
-- Generators
 - ...

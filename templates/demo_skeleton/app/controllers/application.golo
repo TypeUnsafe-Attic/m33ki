@@ -8,10 +8,10 @@ function ApplicationController =  {
 
   return DynamicObject()
     : define("about", |this, request, response| {
-        response: type("application/json")
-        response: status(200)
-        return Json(): toJsonString(
-          map[["about", About(): message()]]
-        )
+        response
+          : json(Json(): toJsonString(
+              map[["about", About(): message()]]
+            ))
+          : status(200)
     })
 }

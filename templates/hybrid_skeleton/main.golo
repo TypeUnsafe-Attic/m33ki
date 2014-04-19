@@ -15,7 +15,7 @@ function main = |args| {
   listen(true) # listen to change, then compile java file
 
   GET("/about", |request, response| {
-    return Application(): about(request, response)
+    response: json(Application(): about())
   })
 
 }
