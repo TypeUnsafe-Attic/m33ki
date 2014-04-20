@@ -52,6 +52,7 @@ augment spark.Response {
 }
 
 local function static = |path_static| -> externalStaticFileLocation(File("."): getCanonicalPath() + path_static)
+local function staticResources = |path_static| -> staticFileLocation(path_static)
 local function port = |port_number| -> setPort(port_number)
 
 function stop = |number, body| -> spark.AbstractRoute.halt(number, body)
@@ -64,6 +65,10 @@ function initialize = {
   return DynamicObject()
     : define("static", |this, path_static| {
         static(path_static)
+        return this
+      })
+    : define("resources", |this, path_static| {
+        staticResources(path_static)
         return this
       })
     : define("port", |this, port_number| {

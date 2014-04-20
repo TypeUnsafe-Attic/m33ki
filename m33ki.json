@@ -2,4 +2,5 @@
     "1" : ["Golo Skeleton project", "golo_skeleton"]
   , "2" : ["Hybrid project (Java + Golo)", "hybrid_skeleton"]
   , "3" : ["Demo", "demo_skeleton"]
+  , "4" : ["Maven project", "maven_skeleton"]
 }

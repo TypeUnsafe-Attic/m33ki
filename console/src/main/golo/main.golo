@@ -81,7 +81,7 @@ function main = |args| {
   let targetDir_application = targetDir + "/" + appName
   let tgtDir_application = File(targetDir_application)
   let tgtDir_application_jars = File(targetDir_application + "/jars")
-  let tgtDir_application_libs = File(targetDir_application + "/libs")
+  var tgtDir_application_libs = File(targetDir_application + "/libs")
 
   # Copy source directory into destination directory
   # including its child directories and files. When
@@ -91,15 +91,6 @@ function main = |args| {
 
   println("Creating %s application":format(appName))
   try {
-    println("1- copying jars files")
-    #println("1- copy %s to %s":format(sourceDir_m33ki_jars, targetDir_application))
-    FileUtils.copyDirectory(srcDir_m33ki_jars, tgtDir_application_jars)
-
-    println("2- copying golo files")
-    #println("2- copy %s to %s":format(sourceDir_m33ki_libs, targetDir_application))
-    FileUtils.copyDirectory(srcDir_m33ki_libs, tgtDir_application_libs)
-
-    println("")
 
     #let applications = map[
     #    ["1", ["Simple", "simple"]]
@@ -145,6 +136,19 @@ function main = |args| {
           File(sourceDir + "/templates/" + choice: get(1))
         , tgtDir_application
       )
+
+      if choice: get(1): contains("maven") {
+        tgtDir_application_libs = File(targetDir_application + "/src/main/golo/libs")
+      }
+
+
+      println("1- copying jars files")
+      #println("1- copy %s to %s":format(sourceDir_m33ki_jars, targetDir_application))
+      FileUtils.copyDirectory(srcDir_m33ki_jars, tgtDir_application_jars)
+
+      println("2- copying golo files")
+      #println("2- copy %s to %s":format(sourceDir_m33ki_libs, targetDir_application))
+      FileUtils.copyDirectory(srcDir_m33ki_libs, tgtDir_application_libs)
 
       println("")
       println("%s application has been created": format(appName))
