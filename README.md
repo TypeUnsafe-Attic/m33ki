@@ -177,7 +177,7 @@ You have to install Golo and set GOLO_HOME to PATH
     # 1- tap the typeunsafe repository (only once)
     brew tap TypeUnsafe/golo
     
-    # 3- install the m33ki formula
+    # 2- install the m33ki formula (depends on golo)
     brew install --HEAD m33ki
     
 ###Windows
