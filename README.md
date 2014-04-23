@@ -171,7 +171,15 @@ You have to install Golo and set GOLO_HOME to PATH
     M33KI_HOME=/directory/m33ki
     export M33KI_HOME
     export PATH=$PATH:$M33KI_HOME
-
+    
+###OSX with [Homebrew](https://github.com/TypeUnsafe/homebrew-golo)
+    
+    # 1- tap the typeunsafe repository (only once)
+    brew tap TypeUnsafe/golo
+    
+    # 2- install the m33ki formula (depends on golo)
+    brew install --HEAD m33ki
+    
 ###Windows
 
   Set System Variables in Configuration Panel.
